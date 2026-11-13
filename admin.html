@@ -271,15 +271,12 @@ input[type=color]{width:38px;height:30px;padding:2px;border:1px solid var(--line
   <div class="lg-card">
     <div class="lg-brand">核樂不煩 · STUDIO</div>
     <div class="lg-sub">管理后台 · 仅限授权账号</div>
-    <div class="lg-field"><label>邮箱</label><input id="lgUser" type="email" placeholder="收验证码的邮箱" autocomplete="off"></div>
-    <div class="lg-field" style="display:flex;gap:8px;align-items:flex-end">
-      <div style="flex:1"><label>验证码</label><input id="lgCode" placeholder="6 位数字" autocomplete="off" maxlength="6"></div>
-      <button class="lg-code" id="lgSend" onclick="sendCode()" style="height:38px;padding:0 12px;white-space:nowrap">发 验 证 码</button>
-    </div>
+    <div class="lg-field"><label>账号（邮箱）</label><input id="lgUser" type="email" placeholder="管理员邮箱" autocomplete="off"></div>
+    <div class="lg-field"><label>密码</label><input id="lgPwd" type="password" placeholder="请输入密码" autocomplete="off"></div>
     <div class="lg-err" id="lgErr"></div>
     <button class="lg-btn" onclick="doLogin()" id="lgBtn">登 录</button>
     <div class="lg-hint">
-      只有管理员邮箱能进。第一次登录的邮箱自动成为店主账号，之后其他邮箱即使登录也进不来。
+      只有管理员账号能进。若忘记密码，可点下方「邮箱验证码登录」临时进入后重置。
     </div>
   </div>
 </div>
@@ -415,53 +412,31 @@ try{
 window.__cloud = cloud; window.__cloudErr = cloudErr;
 
 /* ==================== 登录 ==================== */
-var pendingOtp = null, sendingCode = false;
 
 function setErr(m){ $('lgErr').textContent = m || ''; }
 
-function sendCode(){
-  var email = $('lgUser').value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('请输入正确的邮箱地址'); return; }
-  if(!cloud){ setErr('云服务没连上（' + (cloudErr || '原因未知') + '），刷新页面重试'); return; }
-  if(sendingCode) return;
-  sendingCode = true;
-  $('lgSend').textContent = '发 送 中…';
-  cloud.auth.sendOtp({ email: email }).then(function(r){
-    sendingCode = false;
-    $('lgSend').textContent = '重 新 发 送';
-    if(r.error){ setErr(r.error.message || '验证码发送失败'); return; }
-    pendingOtp = { email: email, verificationId: r.data.verificationId, isExistingUser: r.data.isExistingUser };
-    setErr('');
-    toast('验证码已发到 ' + email);
-  }).catch(function(){
-    sendingCode = false;
-    $('lgSend').textContent = '重 新 发 送';
-    setErr('网络异常，稍后再试');
-  });
-}
-
 function doLogin(){
-  var email = $('lgUser').value.trim(), code = $('lgCode').value.trim();
-  if(!pendingOtp || pendingOtp.email !== email){ setErr('请先点「发验证码」'); return; }
-  if(!/^\d{4,8}$/.test(code)){ setErr('请输入收到的验证码'); return; }
+  var email = $('lgUser').value.trim(), pwd = $('lgPwd').value;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('请输入正确的账号（邮箱）'); return; }
+  if(!pwd){ setErr('请输入密码'); return; }
+  if(!cloud){ setErr('云服务没连上（' + (cloudErr || '原因未知') + '），刷新页面重试'); return; }
   $('lgBtn').textContent = '登 录 中…';
   setErr('');
-  cloud.auth.verifyOtp({
-    email: pendingOtp.email,
-    verificationId: pendingOtp.verificationId,
-    isExistingUser: pendingOtp.isExistingUser,
-    token: code
-  }).then(function(r){
+  cloud.auth.signInWithPassword({ email: email, password: pwd }).then(function(r){
     $('lgBtn').textContent = '登 录';
-    if(r.error){ setErr(r.error.message || '验证码不对'); return; }
+    if(r.error){
+      var m = r.error.message || '';
+      if(/密码|password|credential|invalid/i.test(m)) setErr('账号或密码不对');
+      else setErr(m || '登录失败');
+      return;
+    }
     return cloud.database.rpc('claim_admin').then(function(a){
       if(a.error){ setErr('已登录，但管理员校验失败：' + (a.error.message || '')); return; }
       if(a.data !== true){
-        setErr('这个邮箱不是管理员。换店主邮箱登录。');
+        setErr('这个账号不是管理员。换店主账号登录。');
         cloud.auth.signOut();
         return;
       }
-      pendingOtp = null;
       afterLogin(r.data.user);
     });
   }).catch(function(e){
@@ -499,7 +474,7 @@ function doLogout(){
   S.user = null;
   $('appView').style.display='none';
   $('loginView').style.display='flex';
-  $('lgCode').value='';
+  $('lgPwd').value='';
 }
 
 /* ==================== 云端读写 ==================== */
@@ -905,7 +880,7 @@ function renderAccounts(){
   if(!can('accounts')){ $('content').innerHTML = '<div class="empty-row">当前账号没有权限</div>'; return; }
   var email = (S.user && S.user.email) || '—';
   var h = '<div class="role-hint">'
-    + '<b>现在是真的了：</b>登录用邮箱验证码，身份由云端校验。每次保存都会带上这个人的登录凭证，数据库只对 <b>admins 白名单里的人</b>放行写操作——前端藏按钮拦不住人，数据库这一层才拦得住。'
+    + '<b>现在是真的了：</b>登录用邮箱加密码，身份由云端校验。每次保存都会带上这个人的登录凭证，数据库只对 <b>admins 白名单里的人</b>放行写操作——前端藏按钮拦不住人，数据库这一层才拦得住。'
     + '</div>';
   h += '<div class="card"><table><thead><tr><th>邮箱</th><th>角色</th><th>可访问</th><th>状态</th></tr></thead><tbody>';
   h += '<tr>'
@@ -916,8 +891,8 @@ function renderAccounts(){
     + '</tr>';
   h += '</tbody></table></div>';
   h += '<div style="margin-top:14px;font-size:11.5px;color:var(--ink4);line-height:2">'
-    + '第一个登录的邮箱自动成为店主，之后别的邮箱即使能收验证码、能登录，<b>也改不了任何东西</b>——数据库会拒绝。<br>'
-    + '要再加一个同事当管理员，跟我要一次就行：我把对方邮箱加进白名单，他用自己的邮箱登录即可。<br>'
+    + '第一个登录的邮箱自动成为店主，之后别的账号即使密码正确、能登录，<b>也改不了任何东西</b>——数据库会拒绝。<br>'
+    + '要再加一个同事当管理员，跟我要一次就行：我把对方邮箱加进白名单，他用自己的账号登录即可。<br>'
     + '想收回权限，也是在同一处删掉，立刻失效。</div>';
   $('content').innerHTML = h;
 }
@@ -1709,8 +1684,8 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDraw
 (function boot(){
   loadCfg();
   loadWorks();
-  $('lgCode').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
-  $('lgUser').addEventListener('keydown', function(e){ if(e.key==='Enter') sendCode(); });
+  $('lgPwd').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+  $('lgUser').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
   var d = new Date();
   $('todayPill').textContent = d.getFullYear() + ' 年 ' + (d.getMonth()+1) + ' 月 ' + d.getDate() + ' 日';
 
