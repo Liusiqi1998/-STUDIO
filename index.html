@@ -377,7 +377,10 @@ html[data-embed="on"] .cap,html[data-embed="on"] .jump{display:none}
 html[data-embed="on"] .phone{width:375px;height:812px;margin:0;border:0;border-radius:0;
   box-shadow:none;transform:none}
 </style>
-<!-- 线上正式配置：由后台「导出配置」生成后放在这里，改了它网站就变 -->
+<!-- 云服务 SDK：配置与作品都存在云端数据库，后台改完立刻生效 -->
+<!-- 云服务 SDK：放本地自己托管，不走 CDN（jsDelivr 在国内经常连不上） -->
+<script src="./vendor/cloud-sdk.js"></script>
+<!-- 离线兜底配置：云端读不到时用这里的默认值 -->
 <script src="./cfg.js"></script>
 <script>
 /* =========================================================================
@@ -495,7 +498,7 @@ function _rgb(h){
 function _rgba(h,a){ var c=_rgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
 
 /* 主题：只做一件事——把配置写进 CSS 变量 */
-(function applyTheme(){
+function applyTheme(){
   var t=CFG.theme, L=CFG.layout, s=document.documentElement.style, d=document.documentElement;
   s.setProperty('--paper',t.paper);
   s.setProperty('--surf',t.surf);
@@ -516,7 +519,8 @@ function _rgba(h,a){ var c=_rgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+
   d.setAttribute('data-video',L.video?'on':'off');
   d.setAttribute('data-kf',L.kf?'on':'off');
   if(new URLSearchParams(location.search).get('embed')) d.setAttribute('data-embed','on');
-})();
+}
+applyTheme();
 </script>
 </head>
 <body>
@@ -967,21 +971,11 @@ var SPEC = {  walnut:[['品种','pin'],['边宽 · mm','bw'],['桩型','zhuang']
   bodhi:[['品种','pin'],['珠径 · mm','zj'],['颗数','ks'],['配对','pd'],['皮质','pz'],['克重 · g','kz']]
 };
 
-/* 后台作品数据覆盖：后台改价格、改标题、上下架，这里立刻跟着变 */
-(function applyWorks(){
-  var list = null;
-  /* 优先用已发布的作品数据（cfg.js），其次才是本机后台草稿 */
-  if(REMOTE.works && REMOTE.works.length){ list = REMOTE.works; }
-  else{
-    var raw = null;
-    try{ raw = localStorage.getItem('gh_works'); }catch(e){}
-    if(!raw) return;
-    try{ list = JSON.parse(raw); }catch(e){ return; }
-  }
+/* 后台作品数据覆盖：后台改价格、改标题、上下架，这里立刻跟着变。
+   同一个 id 重复调用不会产生重复项，所以云端数据回来后可以再跑一次。 */
+function applyWorkList(list){
   if(!list || !list.length) return;
-  var ids = {};
   list.forEach(function(w, i){
-    ids[w.id] = 1;
     var cat = w.cat==='菩提手串' ? 'bodhi' : 'walnut';
     var sub = String(w.t||'').split('·')[0].trim();
     var size = parseFloat(w.spec) || 0;
@@ -998,6 +992,18 @@ var SPEC = {  walnut:[['品种','pin'],['边宽 · mm','bw'],['桩型','zhuang']
         bw:'—', zhuang:'—', pd:'—', pz:'—', kz:'—', zj:'—', ks:'—'});
     }
   });
+}
+(function applyWorks(){
+  var list = null;
+  /* 优先用已发布的作品数据（cfg.js），其次才是本机后台草稿 */
+  if(REMOTE.works && REMOTE.works.length){ list = REMOTE.works; }
+  else{
+    var raw = null;
+    try{ raw = localStorage.getItem('gh_works'); }catch(e){}
+    if(!raw) return;
+    try{ list = JSON.parse(raw); }catch(e){ return; }
+  }
+  applyWorkList(list);
 })();
 
 /* 品类配置：子分类、排序、尺寸档 */
@@ -1471,7 +1477,63 @@ function tick(){
 tick(); setInterval(tick, 20000);
 drawQR('qr1',20261113);
 drawQR('qr2',87654321);
+
+/* ==================== 云端内容 ====================
+   配置与作品都存在云数据库：site_config 一行管全站文案与配色，works 一表管货。
+   后台改完点保存，客户刷新就能看到。读不到就安静地用页面里的默认值，不白屏。 */
+var CLOUD_CONF = {
+  endpoint: 'https://wbapp-ho0ctbltvoiyjxduirgtgl.app.workbuddy.host',
+  oauthRelayBaseUrl: 'https://www.workbuddy.cn/v2/as/genie-baas/oauth',
+  publishableKey: 'wbpk_ho0CTBlTVOiyJXdUIRGtgL_QW8CinQPGpgHdNee2PQaAClJkzQZC77c'
+};
+var cloud = null;
+try{
+  if(window.WorkBuddyCloud && WorkBuddyCloud.createWorkBuddyCloud){
+    cloud = WorkBuddyCloud.createWorkBuddyCloud(CLOUD_CONF);
+  }
+}catch(e){ cloud = null; }
+
+function reapplyAll(){
+  try{ applyTheme(); }catch(e){}
+  try{ applyContent(); }catch(e){}
+  try{ renderHome(); }catch(e){}
+  try{ renderCat(); }catch(e){}
+  try{ if(curItem) renderDetail(curItem); }catch(e){}
+  try{ applyPages(); }catch(e){}
+}
+
+function loadFromCloud(){
+  if(!cloud) return Promise.resolve();
+  /* 后台实时预览带 ?cfg=，那是在看未保存的改动，不能被云端内容盖掉 */
+  if(new URLSearchParams(location.search).get('cfg')) return Promise.resolve();
+  return cloud.database.from('site_config').select('data').eq('id',1).maybeSingle()
+    .then(function(r){
+      if(r && !r.error && r.data && r.data.data && Object.keys(r.data.data).length){
+        CFG = deepMerge(DEFAULT_CFG, r.data.data);
+        if(CFG.cats){
+          for(var ck in CFG.cats){
+            if(CATS[ck]){ CATS[ck].label = CFG.cats[ck].label; CATS[ck].subs = CFG.cats[ck].subs.slice(); }
+          }
+        }
+        reapplyAll();
+      }
+      return cloud.database.from('works').select('data,status,sort').order('sort',{ascending:true});
+    })
+    .then(function(w){
+      if(w && !w.error && w.data && w.data.length){
+        applyWorkList(w.data.map(function(r){
+          var o = r.data || {};
+          if(r.status) o.status = r.status;
+          return o;
+        }));
+        reapplyAll();
+      }
+    })
+    .catch(function(e){ /* 云端不可用时保持默认内容 */ });
+}
+
 boot();
+loadFromCloud();
 </script>
 </body>
 </html>

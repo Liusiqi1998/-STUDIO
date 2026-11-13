@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>核樂不煩 · STUDIO 管理后台</title>
+<style>
+:root{
+  --ink:#161513; --ink2:#4A4642; --ink3:#8E8A84; --ink4:#B5B1AA;
+  --line:#E7E4DE; --line2:#F1EFEB; --bg:#F7F6F3; --card:#FFFFFF;
+  --red:#9E3327; --amber:#8A6A2F; --green:#2F6B4F;
+  --sans:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html,body{height:100%}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:13px}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:13px;color:var(--ink);outline:none}
+::selection{background:rgba(158,51,39,.14)}
+
+/* ---------- 登录 ---------- */
+.login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#141311;z-index:50}
+.login::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 20%,rgba(158,51,39,.16),transparent 55%)}
+.lg-card{position:relative;width:380px;background:#fff;border-radius:16px;padding:40px 36px 32px;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.lg-brand{font-size:17px;letter-spacing:1px;font-weight:500}
+.lg-sub{font-size:11.5px;color:var(--ink3);margin-top:7px;letter-spacing:.5px}
+.lg-field{margin-top:18px}
+.lg-field label{display:block;font-size:11px;color:var(--ink3);margin-bottom:7px;letter-spacing:.5px}
+.lg-field input{width:100%;height:42px;border:1px solid var(--line);border-radius:9px;
+  padding:0 13px;background:#FBFAF8;transition:border-color .15s}
+.lg-field input:focus{border-color:var(--ink);background:#fff}
+.lg-btn{width:100%;height:44px;margin-top:24px;border:0;border-radius:9px;
+  background:var(--ink);color:#fff;font-size:13.5px;letter-spacing:3px}
+.lg-btn:hover{background:#000}
+.lg-err{color:var(--red);font-size:11.5px;margin-top:12px;min-height:16px}
+.lg-hint{margin-top:22px;padding-top:16px;border-top:1px solid var(--line2);
+  font-size:11px;color:var(--ink3);line-height:1.9}
+.lg-hint b{color:var(--ink2);font-weight:400}
+
+/* ---------- 框架 ---------- */
+.app{display:flex;height:100vh;overflow:hidden}
+.side{width:212px;flex-shrink:0;background:#161513;display:flex;flex-direction:column;padding:22px 0 16px}
+.side-brand{padding:0 20px 22px;color:#fff}
+.side-brand b{display:block;font-size:14px;font-weight:500;letter-spacing:.8px}
+.side-brand span{display:block;font-size:10px;color:rgba(255,255,255,.4);margin-top:6px;letter-spacing:1.5px}
+.nav{flex:1}
+.nav a{display:flex;align-items:center;gap:11px;padding:10px 14px;margin:2px 10px;border-radius:8px;
+  color:rgba(255,255,255,.58);font-size:13px;text-decoration:none;transition:.12s}
+.nav a:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
+.nav a.on{background:rgba(255,255,255,.1);color:#fff}
+.nav a .ic{width:16px;display:flex;justify-content:center;opacity:.9}
+.nav a .badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;
+  padding:1px 6px;border-radius:9px;min-width:18px;text-align:center}
+.side-foot{padding:14px 18px 0;border-top:1px solid rgba(255,255,255,.08);margin:0 10px}
+.who{display:flex;align-items:center;gap:9px}
+.avatar{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.who-t{color:#fff;font-size:12px;line-height:1.35}
+.who-t span{display:block;font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;letter-spacing:.3px}
+.logout{margin-left:auto;color:rgba(255,255,255,.4);font-size:11px;background:none;border:0;padding:4px}
+.logout:hover{color:#fff}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.top{height:58px;flex-shrink:0;background:#fff;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;padding:0 26px;gap:14px}
+.top h1{font-size:15px;font-weight:500;margin:0;letter-spacing:.5px}
+.top .crumb{font-size:11.5px;color:var(--ink4)}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:14px}
+.pill{font-size:11px;color:var(--ink3);border:1px solid var(--line);border-radius:20px;padding:4px 10px}
+.body{flex:1;overflow-y:auto;padding:22px 26px 40px}
+
+/* ---------- 通用 ---------- */
+.card{background:var(--card);border-radius:12px;border:1px solid var(--line)}
+.card-h{display:flex;align-items:center;padding:15px 18px;border-bottom:1px solid var(--line2)}
+.card-h h2{font-size:13px;font-weight:500;margin:0}
+.card-h .r{margin-left:auto;font-size:11.5px;color:var(--ink3)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px}
+.stat .k{font-size:11.5px;color:var(--ink3);letter-spacing:.5px}
+.stat .v{font-size:24px;margin-top:9px;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:12px;color:var(--ink3);margin-left:4px;letter-spacing:0}
+.stat .d{font-size:10.5px;color:var(--ink4);margin-top:7px}
+.stat.alert .v{color:var(--red)}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;color:var(--ink3);font-weight:400;text-align:left;padding:11px 16px;
+  background:#FBFAF8;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid var(--line)}
+td{padding:13px 16px;border-bottom:1px solid var(--line2);vertical-align:middle;font-size:12.5px}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#FCFBF9}
+.num{font-variant-numeric:tabular-nums}
+.money{color:var(--red);font-variant-numeric:tabular-nums}
+.thumb{width:42px;height:42px;border-radius:7px;object-fit:cover;background:#F0EFEC;display:block}
+.wcell{display:flex;align-items:center;gap:11px}
+.wcell .t{font-size:12.5px;line-height:1.4}
+.wcell .m{font-size:10.5px;color:var(--ink4);margin-top:3px}
+
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.tag.sale{background:#EDF4EF;color:var(--green)}
+.tag.out{background:#F2F1EE;color:var(--ink3)}
+.tag.draft{background:#FAF0E4;color:var(--amber)}
+.tag.wait{background:#FBE9E7;color:var(--red)}
+.tag.sent{background:#EDF0F5;color:#3A5175}
+.tag.done{background:#EDF4EF;color:var(--green)}
+.tag.cancel{background:#F2F1EE;color:var(--ink4)}
+
+.btn{height:30px;padding:0 12px;border-radius:7px;border:1px solid var(--line);
+  background:#fff;font-size:12px;color:var(--ink2);transition:.12s}
+.btn:hover{border-color:var(--ink4);color:var(--ink)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+.btn.primary:hover{background:#000}
+.btn.danger{color:var(--red);border-color:rgba(158,51,39,.28)}
+.btn.danger:hover{background:#FBE9E7}
+.btn.sm{height:26px;padding:0 9px;font-size:11.5px}
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.search{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 12px;
+  background:#fff;width:230px;font-size:12.5px}
+.search:focus{border-color:var(--ink4)}
+.tabs{display:flex;gap:2px;background:#F2F1EE;border-radius:8px;padding:3px}
+.tabs button{border:0;background:none;padding:6px 13px;border-radius:6px;font-size:12px;color:var(--ink2)}
+.tabs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.toolbar .sp{margin-left:auto}
+.empty-row{text-align:center;color:var(--ink4);padding:56px 0;font-size:12.5px}
+
+.note-cell{max-width:200px;color:var(--ink2);line-height:1.5;font-size:11.5px}
+.note-cell.empty{color:var(--ink4)}
+
+/* ---------- 抽屉 ---------- */
+.mask{position:fixed;inset:0;background:rgba(22,20,18,.4);opacity:0;pointer-events:none;
+  transition:opacity .18s;z-index:60}
+.mask.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;background:#fff;z-index:61;
+  transform:translateX(100%);transition:transform .22s cubic-bezier(.3,.8,.4,1);
+  display:flex;flex-direction:column;box-shadow:-20px 0 60px -20px rgba(0,0,0,.28)}
+.drawer.on{transform:none}
+.dr-h{height:60px;flex-shrink:0;display:flex;align-items:center;padding:0 22px;border-bottom:1px solid var(--line)}
+.dr-h h3{margin:0;font-size:14px;font-weight:500}
+.dr-h .x{margin-left:auto;background:none;border:0;font-size:20px;color:var(--ink4);line-height:1;padding:6px}
+.dr-h .x:hover{color:var(--ink)}
+.dr-b{flex:1;overflow-y:auto;padding:20px 22px}
+.dr-f{flex-shrink:0;padding:14px 22px 18px;border-top:1px solid var(--line);
+  display:flex;gap:10px;justify-content:flex-end}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11.5px;color:var(--ink3);margin-bottom:7px}
+.field label em{color:var(--red);font-style:normal;margin-left:3px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:8px;
+  padding:9px 11px;background:#FBFAF8;transition:.12s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink4);background:#fff}
+.field textarea{resize:vertical;line-height:1.7;min-height:84px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.upbox{border:1px dashed var(--line);border-radius:10px;padding:22px;text-align:center;
+  color:var(--ink4);font-size:12px;background:#FBFAF8}
+.upbox b{display:block;color:var(--ink2);font-weight:400;margin-bottom:5px;font-size:12.5px}
+.thumbs{display:flex;gap:9px;margin-top:11px}
+.thumbs img{width:64px;height:64px;border-radius:8px;object-fit:cover}
+.thumbs .add{width:64px;height:64px;border:1px dashed var(--line);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;color:var(--ink4);font-size:20px}
+.sect-t{font-size:11px;color:var(--ink3);letter-spacing:1px;margin:22px 0 12px;padding-top:16px;
+  border-top:1px solid var(--line2)}
+.sect-t:first-child{margin-top:0;padding-top:0;border:0}
+.warnbox{background:#FAF0E4;border-radius:9px;padding:12px 14px;font-size:11.5px;
+  color:var(--amber);line-height:1.7}
+
+.toast{position:fixed;left:50%;bottom:48px;transform:translate(-50%,20px);background:#161513;
+  color:#fff;font-size:12.5px;padding:10px 18px;border-radius:8px;opacity:0;
+  transition:.2s;pointer-events:none;z-index:99;letter-spacing:.3px}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.role-hint{font-size:11.5px;color:var(--ink3);line-height:1.9;background:#FBFAF8;
+  border:1px solid var(--line2);border-radius:9px;padding:14px 16px;margin-bottom:16px;max-width:920px}
+.role-hint b{color:var(--ink2);font-weight:400}
+
+/* ---------- 外观与配置 ---------- */
+.cfg-wrap{display:grid;grid-template-columns:minmax(0,1fr) 348px;gap:16px;align-items:start}
+.cfg-card{margin-bottom:14px}
+.cfg-body{padding:16px 18px}
+.cfg-2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.cf{margin-bottom:14px;min-width:0}
+.cf label{display:block;font-size:11px;color:var(--ink3);margin-bottom:7px;letter-spacing:.3px}
+.cf label b{color:var(--ink2);font-weight:500}
+.cf input:not([type]),.cf input[type=text],.cf textarea,.cf select{
+  width:100%;height:34px;border:1px solid var(--line);border-radius:8px;padding:0 11px;
+  background:#FBFAF8;font-size:12.5px;transition:.12s}
+.cf textarea{height:auto;padding:10px 11px;line-height:1.75;resize:vertical}
+.cf input:focus,.cf textarea:focus{border-color:var(--ink);background:#fff}
+.cf input[type=range]{width:100%;accent-color:#161513;height:18px;background:none;border:0;padding:0}
+.cf-note{font-size:11px;color:var(--ink3);line-height:1.8;background:#FBFAF8;
+  border:1px solid var(--line2);border-radius:8px;padding:10px 12px}
+.color-row{display:flex;align-items:center;gap:9px}
+input[type=color]{width:38px;height:30px;padding:2px;border:1px solid var(--line);
+  border-radius:7px;background:#fff;cursor:pointer}
+.hex{font-size:11px;color:var(--ink3);letter-spacing:.5px;font-variant-numeric:tabular-nums}
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.preset{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;transition:.12s;background:#fff}
+.preset:hover{border-color:var(--ink4)}
+.preset.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.sw-dots{display:flex;gap:3px;margin-bottom:8px}
+.sw-dots i{width:13px;height:13px;border-radius:50%;display:block;border:1px solid rgba(0,0,0,.06)}
+.p-name{font-size:11.5px}
+.p-sub{font-size:10px;color:var(--ink4);margin-top:3px;line-height:1.4}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg-b{flex:1;text-align:center;font-size:12px;padding:8px 0;color:var(--ink2);cursor:pointer;background:#fff}
+.seg-b+.seg-b{border-left:1px solid var(--line)}
+.seg-b.on{background:var(--ink);color:#fff}
+.sw-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;
+  padding:0 10px;height:34px;background:#fff}
+.sw-t{flex:1;font-size:11.5px;color:var(--ink2)}
+.sw{width:30px;height:17px;border-radius:9px;background:#DCD8D2;position:relative;cursor:pointer;
+  transition:.15s;flex-shrink:0}
+.sw i{position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:#fff;transition:.15s}
+.sw.on{background:var(--ink)}
+.sw.on i{left:15px}
+.cfg-prev{position:sticky;top:0}
+.prev-card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.prev-hd{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line2);font-size:11.5px}
+.prev-hd .r{margin-left:auto;color:var(--ink4);font-size:10.5px}
+.prev-tabs{display:flex;gap:6px;padding:9px 14px 0}
+.pv-t{font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:13px;
+  padding:3px 11px;cursor:pointer;background:#fff}
+.pv-t.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.prev-stage{height:648px;overflow:hidden;display:flex;justify-content:center;background:#EDEBE6}
+.prev-stage iframe{width:375px;height:812px;border:0;transform:scale(.78);transform-origin:top center;flex-shrink:0}
+.prev-ft{display:flex;gap:8px;padding:12px 14px 10px}
+.prev-note{padding:0 14px 14px;font-size:10.5px;color:var(--ink4);line-height:1.75}
+@media (max-width:1180px){
+  .cfg-wrap{grid-template-columns:1fr}
+  .cfg-prev{position:static}
+  .presets{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ---------- 页面管理 ---------- */
+.pg-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pg-t{height:30px;padding:0 13px;border-radius:16px;border:1px solid var(--line);background:#fff;
+  font-size:12px;color:var(--ink2);transition:.12s}
+.pg-t:hover{border-color:var(--ink4);color:var(--ink)}
+.pg-t.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.cf-tip{font-size:10.5px;color:var(--ink4);margin-top:6px;line-height:1.6}
+.imgf{display:flex;gap:14px;align-items:flex-start}
+.imgf-box{width:104px;height:132px;flex-shrink:0;border-radius:9px;border:1px solid var(--line);
+  background:#FBFAF8;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-size:10.5px;color:var(--ink4)}
+.imgf-box img{width:100%;height:100%;object-fit:cover;display:block}
+.imgf-act{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.imgf-act .btn{align-self:flex-start}
+.asset-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.asset-pick{width:26px;height:26px;border-radius:5px;overflow:hidden;border:1px solid var(--line);
+  cursor:pointer;padding:0;background:none}
+.asset-pick:hover{border-color:var(--ink)}
+.asset-pick img{width:100%;height:100%;object-fit:cover;display:block}
+.qrow{display:flex;gap:11px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line2)}
+.qrow:last-child{border-bottom:0}
+.qrow-img{width:46px;height:46px;border-radius:7px;overflow:hidden;position:relative;cursor:pointer;
+  background:#F0EFEC;flex-shrink:0}
+.qrow-img img{width:100%;height:100%;object-fit:cover;display:block}
+.qrow-img em{position:absolute;inset:0;background:rgba(22,20,18,.55);color:#fff;font-size:9.5px;
+  font-style:normal;display:flex;align-items:center;justify-content:center;opacity:0;transition:.12s}
+.qrow-img:hover em{opacity:1}
+.qrow input{width:100%;height:30px;border:1px solid var(--line);border-radius:7px;padding:0 9px;
+  background:#FBFAF8;font-size:12px}
+.qrow input:focus{border-color:var(--ink);background:#fff}
+.qrow select{width:100%;height:28px;border:1px solid var(--line);border-radius:7px;padding:0 6px;
+  background:#fff;font-size:11.5px;color:var(--ink2);margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginView">
+  <div class="lg-card">
+    <div class="lg-brand">核樂不煩 · STUDIO</div>
+    <div class="lg-sub">管理后台 · 仅限授权账号</div>
+    <div class="lg-field"><label>邮箱</label><input id="lgUser" type="email" placeholder="收验证码的邮箱" autocomplete="off"></div>
+    <div class="lg-field" style="display:flex;gap:8px;align-items:flex-end">
+      <div style="flex:1"><label>验证码</label><input id="lgCode" placeholder="6 位数字" autocomplete="off" maxlength="6"></div>
+      <button class="lg-code" id="lgSend" onclick="sendCode()" style="height:38px;padding:0 12px;white-space:nowrap">发 验 证 码</button>
+    </div>
+    <div class="lg-err" id="lgErr"></div>
+    <button class="lg-btn" onclick="doLogin()" id="lgBtn">登 录</button>
+    <div class="lg-hint">
+      只有管理员邮箱能进。第一次登录的邮箱自动成为店主账号，之后其他邮箱即使登录也进不来。
+    </div>
+  </div>
+</div>
+
+<div class="app" id="appView" style="display:none">
+  <aside class="side">
+    <div class="side-brand">
+      <b>核樂不煩</b>
+      <span>S T U D I O</span>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <div class="who">
+        <div class="avatar" id="avt">刘</div>
+        <div class="who-t"><span id="whoName" style="font-size:12px;color:#fff;margin:0">刘总</span><span id="whoRole">超级管理员</span></div>
+        <button class="logout" onclick="doLogout()">退出</button>
+      </div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="top">
+      <h1 id="pageTitle">概览</h1>
+      <span class="crumb" id="pageCrumb"></span>
+      <div class="top-r">
+        <span class="pill" id="todayPill"></span>
+      </div>
+    </header>
+    <div class="body" id="content"></div>
+  </div>
+</div>
+
+<div class="mask" id="mask" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="dr-h"><h3 id="drTitle">编辑</h3><button class="x" onclick="closeDrawer()">×</button></div>
+  <div class="dr-b" id="drBody"></div>
+  <div class="dr-f" id="drFoot"></div>
+</aside>
+<div class="toast" id="toast"></div>
+<input type="file" id="imgFile" accept="image/*" style="display:none" onchange="onImgFile(event)">
+
+<script src="./cfg.js"></script>
+<!-- 云服务 SDK：放本地自己托管，不走 CDN（jsDelivr 在国内经常连不上） -->
+<script src="./vendor/cloud-sdk.js"></script>
+<script>
+/* ==================== 数据 ==================== */
+var ACCOUNTS = [
+  {user:'admin', pwd:'123456', name:'刘总', role:'超级管理员', active:true, last:'今天 19:40'},
+  {user:'kefu', pwd:'888888', name:'小周', role:'客服', active:true, last:'昨天 16:22'}
+];
+
+var ROLE_NAV = {
+  '超级管理员':['dash','works','pages','orders','customers','theme','accounts'],
+  '客服':['dash','orders','customers']
+};
+
+var WORKS = [
+  {id:'n1', no:'018', img:'n1', t:'狮子头 · 白狮子', cat:'文玩核桃', spec:'45mm · 矮桩满肉', p:4800, status:'在售', views:126, at:'11-12'},
+  {id:'n5', no:'023', img:'n5', t:'狮子头 · 满天星', cat:'文玩核桃', spec:'43mm · 矮桩满肉', p:2600, status:'在售', views:88, at:'11-12'},
+  {id:'n2', no:'031', img:'n2', t:'虎头 · 麦穗纹', cat:'文玩核桃', spec:'41mm · 高桩', p:1280, status:'在售', views:54, at:'11-10'},
+  {id:'n3', no:'035', img:'n3', t:'官帽 · 白茬', cat:'文玩核桃', spec:'44mm · 高桩秀气', p:1680, status:'在售', views:61, at:'11-09'},
+  {id:'n4', no:'038', img:'n4', t:'公子帽 · 小尖', cat:'文玩核桃', spec:'42mm · 矮桩', p:1350, status:'在售', views:37, at:'11-08'},
+  {id:'n1b', no:'022', img:'n1', t:'狮子头 · 四座楼', cat:'文玩核桃', spec:'46mm · 矮桩厚边', p:6800, status:'在售', views:203, at:'11-07'},
+  {id:'n5b', no:'029', img:'n5', t:'虎头 · 盘龙纹', cat:'文玩核桃', spec:'40mm · 矮桩', p:980, status:'在售', views:44, at:'11-06'},
+  {id:'n2b', no:'044', img:'n2', t:'公子帽 · 高桩', cat:'文玩核桃', spec:'43mm · 高桩', p:2200, status:'在售', views:31, at:'11-05'},
+  {id:'b1', no:'041', img:'b1', t:'小金刚 · 108 颗', cat:'菩提手串', spec:'9.8mm · 108 颗', p:1680, status:'在售', views:92, at:'11-12'},
+  {id:'b2', no:'045', img:'b2', t:'猴头 · 矮桩圆珠', cat:'菩提手串', spec:'18mm · 14 颗', p:880, status:'在售', views:48, at:'11-11'},
+  {id:'b3', no:'048', img:'b3', t:'凤眼菩提 · 108 颗', cat:'菩提手串', spec:'10.5mm · 108 颗', p:1280, status:'在售', views:66, at:'11-10'},
+  {id:'b1b', no:'052', img:'b1', t:'小金刚 · 单圈', cat:'菩提手串', spec:'12mm · 18 颗', p:480, status:'草稿', views:0, at:'11-13'},
+  {id:'b2b', no:'055', img:'b2', t:'猴头 · 光珠', cat:'菩提手串', spec:'16mm · 16 颗', p:650, status:'在售', views:23, at:'11-09'},
+  {id:'b3b', no:'059', img:'b3', t:'凤眼 · 手串', cat:'菩提手串', spec:'11mm · 18 颗', p:760, status:'在售', views:29, at:'11-08'},
+  {id:'b1c', no:'063', img:'b1', t:'金刚 · 蜂窝纹', cat:'菩提手串', spec:'9mm · 108 颗', p:2380, status:'已出', views:118, at:'11-04'}
+];
+
+var ORDERS = [
+  {no:'GH202611130001', wid:'n1', t:'狮子头 · 白狮子 45mm', img:'n1', p:4800, buyer:'陈先生', phone:'138****6621',
+   addr:'杭州市西湖区文三路 90 号', status:'待发货', payAt:'11-13 19:02', exp:'', expNo:''},
+  {no:'GH202611120002', wid:'n2', t:'虎头 · 麦穗纹 41mm', img:'n2', p:1280, buyer:'王女士', phone:'139****3310',
+   addr:'上海市徐汇区漕溪北路 88 号', status:'待发货', payAt:'11-12 21:14', exp:'', expNo:''},
+  {no:'GH202611100003', wid:'b1', t:'小金刚 · 108 颗 9.8mm', img:'b1', p:1680, buyer:'李工', phone:'137****9022',
+   addr:'北京市朝阳区建国路 108 号', status:'已发货', payAt:'11-10 10:33', exp:'顺丰速运', expNo:'SF1234567890'},
+  {no:'GH202611080004', wid:'n3', t:'官帽 · 白茬 44mm', img:'n3', p:1680, buyer:'张先生', phone:'135****4478',
+   addr:'成都市武侯区人民南路 3 段', status:'已完成', payAt:'11-08 15:20', exp:'顺丰速运', expNo:'SF1234509876'},
+  {no:'GH202611050005', wid:'b2', t:'猴头 · 矮桩圆珠 18mm', img:'b2', p:880, buyer:'赵小姐', phone:'136****1109',
+   addr:'南京市鼓楼区中山北路 12 号', status:'已完成', payAt:'11-05 09:47', exp:'中通快递', expNo:'ZT7788990011'},
+  {no:'GH202611030006', wid:'b3', t:'凤眼菩提 · 108 颗 10.5mm', img:'b3', p:1280, buyer:'周先生', phone:'133****5580',
+   addr:'广州市天河区体育西路 66 号', status:'已取消', payAt:'11-03 18:05', exp:'', expNo:''}
+];
+
+var CUSTOMERS = [
+  {openid:'oX7f...a21', name:'陈先生', phone:'138****6621', first:'2026-03-12', orders:3, amount:9640, src:'抖音', note:'只认矮桩，预算五千上下，看过四座楼'},
+  {openid:'oX7f...b09', name:'王女士', phone:'139****3310', first:'2026-05-08', orders:1, amount:1280, src:'朋友介绍', note:'送人，要求配礼盒和手写卡'},
+  {openid:'oX7f...c33', name:'李工', phone:'137****9022', first:'2026-06-21', orders:2, amount:3560, src:'搜索', note:'喜欢小金刚，问过能不能单颗补'},
+  {openid:'oX7f...d17', name:'张先生', phone:'135****4478', first:'2026-01-30', orders:5, amount:12800, src:'抖音', note:'老客，官帽专收，价格不敏感但要求对得起'},
+  {openid:'oX7f...e42', name:'赵小姐', phone:'136****1109', first:'2026-08-15', orders:1, amount:880, src:'搜索', note:''},
+  {openid:'oX7f...f56', name:'周先生', phone:'133****5580', first:'2026-09-02', orders:1, amount:0, src:'抖音', note:'下过单又退了，说尺寸不合，可再跟'},
+  {openid:'oX7f...g88', name:'孙老板', phone:'188****2201', first:'2026-11-11', orders:0, amount:0, src:'朋友介绍', note:'同行，问过批发价，暂不接'}
+];
+
+/* ==================== 状态 ==================== */
+var S = {
+  user:null,
+  page:'dash',
+  orderTab:'全部',
+  workCat:'全部',
+  workStatus:'全部',
+  workQ:'',
+  pageKey:'home'
+};
+var ROLE_NAV_LABEL = {dash:'概览', works:'作品管理', orders:'订单与发货', customers:'客户名单', pages:'页面管理', theme:'外观与配置', accounts:'账号与权限'};
+
+/* ==================== 工具 ==================== */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function money(n){ return '¥' + Number(n).toLocaleString('en-US'); }
+var toastTimer;
+function toast(m){
+  var t=$('toast'); t.textContent=m; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('on'); },2000);
+}
+
+/* ==================== 云服务 ==================== */
+var CLOUD_CONF = {
+  endpoint: 'https://wbapp-ho0ctbltvoiyjxduirgtgl.app.workbuddy.host',
+  oauthRelayBaseUrl: 'https://www.workbuddy.cn/v2/as/genie-baas/oauth',
+  publishableKey: 'wbpk_ho0CTBlTVOiyJXdUIRGtgL_QW8CinQPGpgHdNee2PQaAClJkzQZC77c'
+};
+var cloud = null, cloudErr = '';
+try{
+  if(!window.WorkBuddyCloud){ cloudErr = 'SDK 文件没加载上'; }
+  else { cloud = WorkBuddyCloud.createWorkBuddyCloud(CLOUD_CONF); }
+}catch(e){ cloud = null; cloudErr = 'SDK 初始化失败 ' + (e && e.message ? e.message : e); }
+/* 供调试：控制台里看 __cloud 就知道到底成没成 */
+window.__cloud = cloud; window.__cloudErr = cloudErr;
+
+/* ==================== 登录 ==================== */
+var pendingOtp = null, sendingCode = false;
+
+function setErr(m){ $('lgErr').textContent = m || ''; }
+
+function sendCode(){
+  var email = $('lgUser').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('请输入正确的邮箱地址'); return; }
+  if(!cloud){ setErr('云服务没连上（' + (cloudErr || '原因未知') + '），刷新页面重试'); return; }
+  if(sendingCode) return;
+  sendingCode = true;
+  $('lgSend').textContent = '发 送 中…';
+  cloud.auth.sendOtp({ email: email }).then(function(r){
+    sendingCode = false;
+    $('lgSend').textContent = '重 新 发 送';
+    if(r.error){ setErr(r.error.message || '验证码发送失败'); return; }
+    pendingOtp = { email: email, verificationId: r.data.verificationId, isExistingUser: r.data.isExistingUser };
+    setErr('');
+    toast('验证码已发到 ' + email);
+  }).catch(function(){
+    sendingCode = false;
+    $('lgSend').textContent = '重 新 发 送';
+    setErr('网络异常，稍后再试');
+  });
+}
+
+function doLogin(){
+  var email = $('lgUser').value.trim(), code = $('lgCode').value.trim();
+  if(!pendingOtp || pendingOtp.email !== email){ setErr('请先点「发验证码」'); return; }
+  if(!/^\d{4,8}$/.test(code)){ setErr('请输入收到的验证码'); return; }
+  $('lgBtn').textContent = '登 录 中…';
+  setErr('');
+  cloud.auth.verifyOtp({
+    email: pendingOtp.email,
+    verificationId: pendingOtp.verificationId,
+    isExistingUser: pendingOtp.isExistingUser,
+    token: code
+  }).then(function(r){
+    $('lgBtn').textContent = '登 录';
+    if(r.error){ setErr(r.error.message || '验证码不对'); return; }
+    return cloud.database.rpc('claim_admin').then(function(a){
+      if(a.error){ setErr('已登录，但管理员校验失败：' + (a.error.message || '')); return; }
+      if(a.data !== true){
+        setErr('这个邮箱不是管理员。换店主邮箱登录。');
+        cloud.auth.signOut();
+        return;
+      }
+      pendingOtp = null;
+      afterLogin(r.data.user);
+    });
+  }).catch(function(e){
+    $('lgBtn').textContent = '登 录';
+    setErr('登录失败：' + (e && e.message ? e.message : '网络异常'));
+  });
+}
+
+function afterLogin(user){
+  var email = (user && user.email) || $('lgUser').value.trim();
+  S.user = { user: email, name: email.split('@')[0], role: '超级管理员', email: email };
+  $('loginView').style.display = 'none';
+  $('appView').style.display = 'flex';
+  $('whoName').textContent = email;
+  $('whoRole').textContent = '店主 · 全部权限';
+  $('avt').textContent = (email.charAt(0) || '店').toUpperCase();
+  buildNav();
+  var h = (location.hash||'').replace('#','');
+  go(ROLE_NAV[S.user.role].indexOf(h) > -1 ? h : 'dash');
+  loadCloudAll();
+}
+
+function resumeSession(){
+  if(!cloud) return;
+  cloud.auth.getSession().then(function(r){
+    if(r.error || !r.data){ return; }
+    return cloud.database.rpc('claim_admin').then(function(a){
+      if(!a.error && a.data === true){ afterLogin(r.data.user); }
+    });
+  }).catch(function(){});
+}
+
+function doLogout(){
+  if(cloud) cloud.auth.signOut();
+  S.user = null;
+  $('appView').style.display='none';
+  $('loginView').style.display='flex';
+  $('lgCode').value='';
+}
+
+/* ==================== 云端读写 ==================== */
+var cloudReady = false;
+
+function loadCloudAll(){
+  var p1 = cloud.database.from('site_config').select('data').eq('id',1).maybeSingle().then(function(r){
+    if(r && !r.error && r.data && r.data.data && Object.keys(r.data.data).length){
+      CFG_ED = cfgMerge(DEF_CFG, r.data.data);
+      cloudReady = true;
+    }
+  });
+  var p2 = cloud.database.from('works').select('data,status,sort').order('sort',{ascending:true}).then(function(r){
+    if(r && !r.error && r.data && r.data.length){
+      WORKS = r.data.map(function(x){
+        var o = x.data || {};
+        if(x.status) o.status = x.status;
+        return o;
+      });
+    }
+  });
+  Promise.all([p1,p2]).then(function(){
+    var k = S.page;
+    go(k);
+    toast(cloudReady ? '已连上云端内容' : '云端还没有内容，点一次「保存到服务器」就写进去');
+  }).catch(function(e){
+    toast('读取云端失败：' + (e && e.message ? e.message : '网络异常'));
+  });
+}
+
+function saveToCloud(){
+  if(!S.user){ toast('先登录'); return; }
+  var btn = $('saveBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '保 存 中…'; }
+  var done = function(ok, msg){
+    if(btn){ btn.disabled = false; btn.textContent = '保存到服务器'; }
+    toast(msg);
+  };
+  cloud.database.from('site_config')
+    .upsert({ id: 1, data: CFG_ED, updated_at: new Date().toISOString() })
+    .select()
+    .then(function(r){
+      if(r.error){
+        done(false, '配置没存上：' + (r.error.message || '权限或网络问题'));
+        return null;
+      }
+      return syncWorks();
+    })
+    .then(function(ok){
+      if(ok === null) return;
+      cloud.database.from('works').select('code').then(function(r){
+        var have = (r && r.data ? r.data : []).map(function(x){ return x.code; });
+        var now = WORKS.map(function(w){ return w.id; });
+        var del = have.filter(function(c){ return now.indexOf(c) < 0; });
+        var chain = Promise.resolve();
+        del.forEach(function(c){
+          chain = chain.then(function(){ return cloud.database.from('works').delete().eq('code', c); });
+        });
+        return chain;
+      }).then(function(){
+        done(true, '已保存到服务器 · 客户刷新就能看到');
+      });
+    })
+    .catch(function(e){
+      done(false, '保存失败：' + (e && e.message ? e.message : '网络异常'));
+    });
+}
+
+function syncWorks(){
+  var chain = Promise.resolve(), bad = 0;
+  WORKS.forEach(function(w, i){
+    chain = chain.then(function(){
+      return cloud.database.from('works')
+        .upsert({ code: w.id, data: w, status: w.status || '在售', sort: i + 1 }, { onConflict: 'code' })
+        .select()
+        .then(function(r){ if(r.error) bad++; });
+    });
+  });
+  return chain.then(function(){ return bad === 0; });
+}
+function buildNav(){
+  var allow = ROLE_NAV[S.user.role] || ['dash'];
+  var icons = {
+    dash:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>',
+    works:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2.5 6.5h11" stroke="currentColor" stroke-width="1.2"/></svg>',
+    orders:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2.5 4.5h11v8a1 1 0 01-1 1h-9a1 1 0 01-1-1v-8z" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 4.5V3a1 1 0 011-1h3a1 1 0 011 1v1.5" stroke="currentColor" stroke-width="1.2"/></svg>',
+    customers:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="6" r="2.3" stroke="currentColor" stroke-width="1.2"/><path d="M2 13.2c0-2 1.8-3.4 4-3.4s4 1.4 4 3.4" stroke="currentColor" stroke-width="1.2"/><path d="M11 6.2a2 2 0 010 3.6M12.6 13.2c0-1.3-.5-2.3-1.3-3" stroke="currentColor" stroke-width="1.2"/></svg>',
+    accounts:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="7" width="11" height="6.5" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2" stroke="currentColor" stroke-width="1.2"/></svg>',
+    pages:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3.5 2.5h6l3 3v8a1 1 0 01-1 1h-8a1 1 0 01-1-1v-10a1 1 0 011-1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M9.2 2.6V6h3.1M5.5 9h5M5.5 11.4h3.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>',
+    theme:'<svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 2.5v11" stroke="currentColor" stroke-width="1.2"/><path d="M8 2.5a5.5 5.5 0 010 11z" fill="currentColor" fill-opacity=".55"/></svg>'
+  };
+  var wait = ORDERS.filter(function(o){ return o.status==='待发货'; }).length;
+  var h='';
+  allow.forEach(function(k){
+    h += '<a href="#'+k+'" data-k="'+k+'" onclick="go(\''+k+'\');return false;">'
+      +  '<span class="ic">'+icons[k]+'</span>'+ROLE_NAV_LABEL[k]
+      +  (k==='orders' && wait ? '<span class="badge">'+wait+'</span>' : '')
+      +  '</a>';
+  });
+  $('nav').innerHTML = h;
+}
+function can(k){
+  var allow = ROLE_NAV[S.user.role] || ['dash'];
+  return allow.indexOf(k)>-1;
+}
+
+function go(k){
+  if(!can(k)){ toast('当前账号没有这个权限'); k='dash'; }
+  S.page = k;
+  var links = $('nav').querySelectorAll('a');
+  for(var i=0;i<links.length;i++) links[i].classList.toggle('on', links[i].getAttribute('data-k')===k);
+  $('pageTitle').textContent = ROLE_NAV_LABEL[k];
+  try{ history.replaceState(null,'','#'+k); }catch(e){}
+  ({dash:renderDash, works:renderWorks, orders:renderOrders, customers:renderCustomers, pages:renderPages, theme:renderTheme, accounts:renderAccounts}[k])();
+}
+
+/* ==================== 概览 ==================== */
+function renderDash(){
+  var wait = ORDERS.filter(function(o){ return o.status==='待发货'; });
+  var onSale = WORKS.filter(function(w){ return w.status==='在售'; }).length;
+  var done = ORDERS.filter(function(o){ return o.status!=='已取消'; });
+  var gmv = done.reduce(function(a,o){ return a+o.p; },0);
+  var h = '';
+  h += '<div class="stats">'
+    +  '<div class="stat alert"><div class="k">待发货</div><div class="v">'+wait.length+'<small>单</small></div><div class="d">'+(wait.length?'尽量当天发出':'没有积压')+'</div></div>'
+    +  '<div class="stat"><div class="k">在售作品</div><div class="v">'+onSale+'<small>件</small></div><div class="d">共 '+WORKS.length+' 件，含草稿与已出</div></div>'
+    +  '<div class="stat"><div class="k">本周加微信</div><div class="v">7<small>人</small></div><div class="d">来自抖音 4 · 搜索 2 · 介绍 1</div></div>'
+    +  '<div class="stat"><div class="k">累计成交</div><div class="v" style="color:var(--ink)">'+money(gmv)+'</div><div class="d">'+done.length+' 笔，不含已取消</div></div>'
+    +  '</div>';
+
+  h += '<div class="card" style="margin-bottom:16px"><div class="card-h"><h2>待发货</h2><span class="r">付款后请当天处理</span></div>'
+    +  '<table><thead><tr><th>订单号</th><th>作品</th><th>买家</th><th>金额</th><th>付款时间</th><th></th></tr></thead><tbody>';
+  if(!wait.length){ h += '<tr><td colspan="6" class="empty-row">没有待发货订单</td></tr>'; }
+  wait.forEach(function(o){
+    h += '<tr><td class="num">'+o.no+'</td>'
+      +  '<td><div class="wcell"><img class="thumb" src="./assets/'+o.img+'.jpg" alt=""><div class="t">'+o.t+'</div></div></td>'
+      +  '<td>'+o.buyer+'</td><td class="money">'+money(o.p)+'</td><td class="num">'+o.payAt+'</td>'
+      +  '<td style="text-align:right"><button class="btn primary sm" onclick="shipOrder(\''+o.no+'\')">发货</button></td></tr>';
+  });
+  h += '</tbody></table></div>';
+
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+  h += '<div class="card"><div class="card-h"><h2>最近上新</h2><span class="r">按时间</span></div><table><tbody>';
+  WORKS.slice(0,5).forEach(function(w){
+    h += '<tr><td><div class="wcell"><img class="thumb" src="./assets/'+w.img+'.jpg" alt=""><div><div class="t">'+w.t+'</div><div class="m">'+w.no+' · '+w.spec+'</div></div></div></td>'
+      +  '<td style="text-align:right" class="money">'+money(w.p)+'</td></tr>';
+  });
+  h += '</tbody></table></div>';
+
+  h += '<div class="card"><div class="card-h"><h2>老客动向</h2><span class="r">按消费额</span></div><table><tbody>';
+  CUSTOMERS.slice().sort(function(a,b){ return b.amount-a.amount; }).slice(0,5).forEach(function(c){
+    h += '<tr><td><div class="t">'+c.name+'</div><div class="m" style="font-size:10.5px;color:var(--ink4);margin-top:3px">'+c.phone+' · '+c.src+'</div></td>'
+      +  '<td style="text-align:right"><div class="money">'+money(c.amount)+'</div><div style="font-size:10.5px;color:var(--ink4);margin-top:3px">'+c.orders+' 单</div></td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  $('content').innerHTML = h;
+}
+
+/* ==================== 作品 ==================== */
+function renderWorks(){
+  var keepFocus = document.activeElement && document.activeElement.id === 'wq';
+  var cats = ['全部','文玩核桃','菩提手串'];
+  var sts = ['全部','在售','已出','草稿'];
+  var h = '<div class="toolbar">';
+  h += '<input class="search" id="wq" placeholder="搜标题或编号" value="'+esc(S.workQ)+'" oninput="S.workQ=this.value;renderWorks()">';
+  h += '<select class="search" style="width:auto" onchange="S.workCat=this.value;renderWorks()">';
+  cats.forEach(function(c){ h += '<option'+(c===S.workCat?' selected':'')+'>'+c+'</option>'; });
+  h += '</select>';
+  h += '<select class="search" style="width:auto" onchange="S.workStatus=this.value;renderWorks()">';
+  sts.forEach(function(c){ h += '<option'+(c===S.workStatus?' selected':'')+'>'+(c==='全部'?'全部状态':c)+'</option>'; });
+  h += '</select>';
+  h += '<span class="sp"></span><button class="btn primary" onclick="editWork()">+ 新增作品</button></div>';
+
+  var list = WORKS.filter(function(w){
+    if(S.workCat!=='全部' && w.cat!==S.workCat) return false;
+    if(S.workStatus!=='全部' && w.status!==S.workStatus) return false;
+    if(S.workQ && (w.t+w.no).indexOf(S.workQ)<0) return false;
+    return true;
+  });
+
+  h += '<div class="card"><table><thead><tr><th>作品</th><th>编号</th><th>品类</th><th>规格</th><th>价格</th><th>状态</th><th>浏览</th><th style="text-align:right">操作</th></tr></thead><tbody>';
+  if(!list.length){ h += '<tr><td colspan="8" class="empty-row">没有符合条件的作品</td></tr>'; }
+  list.forEach(function(w){
+    var tg = w.status==='在售' ? 'sale' : (w.status==='已出' ? 'out' : 'draft');
+    h += '<tr>'
+      + '<td><div class="wcell"><img class="thumb" src="./assets/'+w.img+'.jpg" alt=""><div class="t">'+w.t+'</div></div></td>'
+      + '<td class="num" style="color:var(--ink3)">'+w.no+'</td>'
+      + '<td style="color:var(--ink2)">'+w.cat+'</td>'
+      + '<td style="color:var(--ink3)">'+w.spec+'</td>'
+      + '<td class="money">'+money(w.p)+'</td>'
+      + '<td><span class="tag '+tg+'">'+w.status+'</span></td>'
+      + '<td class="num" style="color:var(--ink3)">'+w.views+'</td>'
+      + '<td style="text-align:right;white-space:nowrap">'
+      +   '<button class="btn sm" onclick="editWork(\''+w.id+'\')">编辑</button> '
+      +   '<button class="btn sm" onclick="toggleWork(\''+w.id+'\')">'+(w.status==='在售'?'下架':'上架')+'</button>'
+      + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  h += '<div style="margin-top:12px;font-size:11.5px;color:var(--ink4)">共 '+list.length+' 件 · 下架不删除，卖掉的改「已出」，将来有纠纷才查得到记录</div>';
+  $('content').innerHTML = h;
+  if(keepFocus){ var el = $('wq'); if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }
+}
+
+function toggleWork(id){
+  var w = WORKS.filter(function(x){ return x.id===id; })[0];
+  if(!w) return;
+  if(w.status==='在售'){ w.status='已出'; toast('已下架，标记为「已出」'); }
+  else { w.status='在售'; toast('已重新上架'); }
+  saveWorks();
+  renderWorks();
+}
+
+function editWork(id){
+  if(!can('works')){ toast('没有权限'); return; }
+  var w = id ? WORKS.filter(function(x){ return x.id===id; })[0] : null;
+  $('drTitle').textContent = w ? '编辑作品' : '新增作品';
+  var imgs = ['n1','n2','n3','n4','n5','b1','b2','b3'];
+  var h = '';
+  h += '<div class="sect-t">图片与视频</div>';
+  h += '<div class="upbox"><b>拖入照片，或点击选择</b>建议 3 张：正面、侧面、上手；视频 60 秒内</div>';
+  h += '<div class="thumbs">' + (w ? '<img src="./assets/'+w.img+'.jpg" alt="">' : '') + '<div class="add">+</div></div>';
+
+  h += '<div class="sect-t">基本信息</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>标题<em>*</em></label><input id="f_t" value="'+esc(w?w.t:'')+'" placeholder="如 狮子头 · 白狮子"></div>';
+  h += '<div class="field"><label>编号<em>*</em></label><input id="f_no" value="'+esc(w?w.no:'')+'" placeholder="如 018"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>品类</label><select id="f_cat">'
+     + '<option'+(w&&w.cat==='文玩核桃'?' selected':'')+'>文玩核桃</option>'
+     + '<option'+(w&&w.cat==='菩提手串'?' selected':'')+'>菩提手串</option></select></div>';
+  h += '<div class="field"><label>规格</label><input id="f_spec" value="'+esc(w?w.spec:'')+'" placeholder="如 45mm · 矮桩满肉"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>价格（元）<em>*</em></label><input id="f_p" type="number" value="'+(w?w.p:'')+'" placeholder="4800"></div>';
+  h += '<div class="field"><label>状态</label><select id="f_st">'
+     + ['在售','已出','草稿'].map(function(s){ return '<option'+(w&&w.status===s?' selected':'')+'>'+s+'</option>'; }).join('')
+     + '</select></div>';
+  h += '</div>';
+
+  h += '<div class="sect-t">详情参数</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>边宽 / 珠径（mm）</label><input id="f_size" value="'+(w?w.spec.split(' · ')[0].replace('mm',''):'')+'" placeholder="45.2 / 45.0"></div>';
+  h += '<div class="field"><label>克重（g）</label><input id="f_w" placeholder="32.6"></div>';
+  h += '</div>';
+  h += '<div class="field"><label>来历文案</label><textarea id="f_story" placeholder="这对是去年秋天从涞水收的青皮……&#10;写料从哪来、盘了多久、为什么值得买">'+((w&&w.story)?esc(w.story):'')+'</textarea></div>';
+
+  h += '<div class="sect-t">上线前自检</div>';
+  h += '<div class="warnbox">不含濒危物种制品（象牙、犀角、玳瑁、珊瑚）；不含「开光、辟邪、招财」等功效承诺；不含「保真、升值、投资回报」等广告法禁用表述。这两条由发布人负责。</div>';
+
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
+    + '<button class="btn primary" onclick="saveWork(\''+(id||'')+'\')">'+(w?'保存修改':'保存并上架')+'</button>';
+  openDrawer();
+}
+
+function saveWork(id){
+  var t = $('f_t').value.trim(), no = $('f_no').value.trim(), p = +$('f_p').value;
+  if(!t || !no || !p){ toast('标题、编号、价格必填'); return; }
+  var cat = $('f_cat').value, spec = $('f_spec').value.trim(), st = $('f_st').value;
+  var story = $('f_story').value.trim();
+  if(id){
+    var w = WORKS.filter(function(x){ return x.id===id; })[0];
+    w.t=t; w.no=no; w.p=p; w.cat=cat; w.spec=spec; w.status=st; w.story=story;
+    toast('已保存，客户看到的立刻是改后的');
+  }else{
+    WORKS.unshift({id:'x'+Date.now(), no:no, img:'n1', t:t, cat:cat, spec:spec, p:p, status:st, views:0, at:'今天', story:story});
+    toast('已新增，到小程序里就能看到');
+  }
+  saveWorks();
+  closeDrawer(); renderWorks();
+}
+
+/* ==================== 订单 ==================== */
+function renderOrders(){
+  var tabs = ['全部','待发货','已发货','已完成','已取消'];
+  var h = '<div class="toolbar"><div class="tabs">';
+  tabs.forEach(function(t){
+    var n = t==='全部' ? ORDERS.length : ORDERS.filter(function(o){ return o.status===t; }).length;
+    h += '<button class="'+(S.orderTab===t?'on':'')+'" onclick="S.orderTab=\''+t+'\';renderOrders()">'+t+' '+n+'</button>';
+  });
+  h += '</div><span class="sp"></span>'
+    +  '<select class="search" style="width:auto"><option>最近 30 天</option><option>本月</option><option>全部时间</option></select>'
+    +  '<button class="btn">导出表格</button></div>';
+
+  var list = ORDERS.filter(function(o){ return S.orderTab==='全部' || o.status===S.orderTab; });
+  h += '<div class="card"><table><thead><tr><th>订单号</th><th>作品</th><th>买家</th><th>金额</th><th>付款时间</th><th>状态</th><th>快递单号</th><th style="text-align:right">操作</th></tr></thead><tbody>';
+  if(!list.length){ h += '<tr><td colspan="8" class="empty-row">这一栏没有订单</td></tr>'; }
+  list.forEach(function(o){
+    var tg = o.status==='待发货'?'wait':(o.status==='已发货'?'sent':(o.status==='已完成'?'done':'cancel'));
+    h += '<tr>'
+      + '<td class="num">'+o.no+'</td>'
+      + '<td><div class="wcell"><img class="thumb" src="./assets/'+o.img+'.jpg" alt=""><div class="t">'+o.t+'</div></div></td>'
+      + '<td>'+o.buyer+'<div style="font-size:10.5px;color:var(--ink4);margin-top:3px">'+o.phone+'</div></td>'
+      + '<td class="money">'+money(o.p)+'</td>'
+      + '<td class="num" style="color:var(--ink3)">'+o.payAt+'</td>'
+      + '<td><span class="tag '+tg+'">'+o.status+'</span></td>'
+      + '<td class="num" style="color:var(--ink3);font-size:11.5px">'+(o.expNo||'—')+'</td>'
+      + '<td style="text-align:right;white-space:nowrap">'
+      + (o.status==='待发货' ? '<button class="btn primary sm" onclick="shipOrder(\''+o.no+'\')">发货</button>' : '<button class="btn sm" onclick="viewOrder(\''+o.no+'\')">详情</button>')
+      + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  h += '<div style="margin-top:12px;font-size:11.5px;color:var(--ink4)">订单不删除，作废的标「已取消」，保留记录备查</div>';
+  $('content').innerHTML = h;
+}
+
+function shipOrder(no){
+  var o = ORDERS.filter(function(x){ return x.no===no; })[0];
+  if(!o) return;
+  $('drTitle').textContent = '发货 · ' + o.no;
+  var h = '';
+  h += '<div style="background:#FBFAF8;border:1px solid var(--line2);border-radius:10px;padding:14px 16px;margin-bottom:18px">'
+    +  '<div style="display:flex;gap:12px;align-items:center">'
+    +  '<img class="thumb" src="./assets/'+o.img+'.jpg" alt="" style="width:52px;height:52px">'
+    +  '<div><div style="font-size:13px">'+o.t+'</div>'
+    +  '<div style="font-size:11.5px;color:var(--ink4);margin-top:4px">'+o.buyer+' · '+o.phone+'</div></div>'
+    +  '<div style="margin-left:auto" class="money">'+money(o.p)+'</div></div>'
+    +  '<div style="font-size:11.5px;color:var(--ink3);margin-top:12px;line-height:1.8;padding-top:12px;border-top:1px solid var(--line2)">'+o.addr+'</div>'
+    +  '</div>';
+  h += '<div class="field"><label>快递公司</label><select id="s_exp">'
+    + ['顺丰速运','中通快递','圆通速递','京东物流','邮政 EMS'].map(function(e){ return '<option>'+e+'</option>'; }).join('')
+    + '</select></div>';
+  h += '<div class="field"><label>运单号<em>*</em></label><input id="s_no" placeholder="粘贴或输入运单号"></div>';
+  h += '<div class="warnbox">发货前记得拍存档照，和详情页的图一起留着。核桃发出去之后包装有没有磕碰，靠这个说得清。</div>';
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
+    + '<button class="btn primary" onclick="confirmShip(\''+no+'\')">确认发货</button>';
+  openDrawer();
+}
+
+function confirmShip(no){
+  var o = ORDERS.filter(function(x){ return x.no===no; })[0];
+  var exp = $('s_exp').value, expNo = $('s_no').value.trim();
+  if(!expNo){ toast('运单号必填'); return; }
+  o.exp = exp; o.expNo = expNo; o.status = '已发货';
+  closeDrawer(); buildNav();
+  S.orderTab = '全部'; renderOrders();
+  toast('已发货，客户微信会收到通知');
+}
+
+function viewOrder(no){
+  var o = ORDERS.filter(function(x){ return x.no===no; })[0];
+  if(!o) return;
+  $('drTitle').textContent = '订单详情';
+  var rows = [
+    ['订单号', o.no],['作品', o.t],['金额', money(o.p)],['状态', o.status],
+    ['买家', o.buyer],['电话', o.phone],['地址', o.addr],['付款时间', o.payAt],
+    ['快递', o.exp || '—'],['运单号', o.expNo || '—']
+  ];
+  var h = '<table style="border:1px solid var(--line2);border-radius:10px;overflow:hidden">';
+  rows.forEach(function(r){
+    h += '<tr><td style="width:88px;color:var(--ink3);background:#FBFAF8;font-size:11.5px">'+r[0]+'</td><td>'+r[1]+'</td></tr>';
+  });
+  h += '</table>';
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">关闭</button>';
+  openDrawer();
+}
+
+/* ==================== 客户 ==================== */
+function renderCustomers(){
+  var h = '<div class="toolbar">';
+  h += '<input class="search" placeholder="搜名字或手机号">';
+  h += '<select class="search" style="width:auto"><option>全部来源</option><option>抖音</option><option>搜索</option><option>朋友介绍</option></select>';
+  h += '<span class="sp"></span><span style="font-size:11.5px;color:var(--ink4)">共 '+CUSTOMERS.length+' 位客户</span></div>';
+  h += '<div class="card"><table><thead><tr><th>客户</th><th>手机号</th><th>首次到访</th><th>订单</th><th>累计消费</th><th>来源</th><th>备注</th><th style="text-align:right">操作</th></tr></thead><tbody>';
+  CUSTOMERS.forEach(function(c,i){
+    h += '<tr>'
+      + '<td><div style="display:flex;align-items:center;gap:9px"><div class="avatar" style="width:26px;height:26px;background:#F2F1EE;color:var(--ink2);font-size:11px">'+c.name.slice(0,1)+'</div>'+c.name+'</div></td>'
+      + '<td class="num" style="color:var(--ink3)">'+c.phone+'</td>'
+      + '<td class="num" style="color:var(--ink3)">'+c.first+'</td>'
+      + '<td class="num">'+c.orders+'</td>'
+      + '<td class="money">'+money(c.amount)+'</td>'
+      + '<td><span class="tag out">'+c.src+'</span></td>'
+      + '<td class="note-cell'+(c.note?'':' empty')+'">'+(c.note || '—')+'</td>'
+      + '<td style="text-align:right"><button class="btn sm" onclick="editNote('+i+')">备注</button></td>'
+      + '</tr>';
+  });
+  h += '</tbody></table></div>';
+  $('content').innerHTML = h;
+}
+
+function editNote(i){
+  var c = CUSTOMERS[i];
+  $('drTitle').textContent = '备注 · ' + c.name;
+  var h = '<div class="field"><label>什么时候记住这个人</label>'
+    + '<textarea id="n_txt" style="min-height:130px" placeholder="他喜欢什么、预算多少、问过哪件、忌讳什么">'+esc(c.note)+'</textarea></div>'
+    + '<div style="font-size:11.5px;color:var(--ink3);line-height:1.9">这段文字只有后台看得到。下次他再来问，您一眼就知道之前在聊什么，这比任何客户管理系统都管用。</div>';
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
+    + '<button class="btn primary" onclick="saveNote('+i+')">保存</button>';
+  openDrawer();
+}
+function saveNote(i){
+  CUSTOMERS[i].note = $('n_txt').value.trim();
+  closeDrawer(); renderCustomers(); toast('备注已保存');
+}
+
+/* ==================== 账号 ==================== */
+function renderAccounts(){
+  if(!can('accounts')){ $('content').innerHTML = '<div class="empty-row">当前账号没有权限</div>'; return; }
+  var email = (S.user && S.user.email) || '—';
+  var h = '<div class="role-hint">'
+    + '<b>现在是真的了：</b>登录用邮箱验证码，身份由云端校验。每次保存都会带上这个人的登录凭证，数据库只对 <b>admins 白名单里的人</b>放行写操作——前端藏按钮拦不住人，数据库这一层才拦得住。'
+    + '</div>';
+  h += '<div class="card"><table><thead><tr><th>邮箱</th><th>角色</th><th>可访问</th><th>状态</th></tr></thead><tbody>';
+  h += '<tr>'
+    + '<td style="font-family:ui-monospace,monospace;font-size:12px">'+esc(email)+'</td>'
+    + '<td><span class="tag wait">店主</span></td>'
+    + '<td style="font-size:11.5px;color:var(--ink3)">'+(ROLE_NAV['超级管理员']||[]).map(function(k){ return ROLE_NAV_LABEL[k]; }).join(' · ')+'</td>'
+    + '<td><span class="tag sale">正常</span></td>'
+    + '</tr>';
+  h += '</tbody></table></div>';
+  h += '<div style="margin-top:14px;font-size:11.5px;color:var(--ink4);line-height:2">'
+    + '第一个登录的邮箱自动成为店主，之后别的邮箱即使能收验证码、能登录，<b>也改不了任何东西</b>——数据库会拒绝。<br>'
+    + '要再加一个同事当管理员，跟我要一次就行：我把对方邮箱加进白名单，他用自己的邮箱登录即可。<br>'
+    + '想收回权限，也是在同一处删掉，立刻失效。</div>';
+  $('content').innerHTML = h;
+}
+
+function toggleAcc(i){
+  ACCOUNTS[i].active = !ACCOUNTS[i].active;
+  renderAccounts();
+  toast(ACCOUNTS[i].active ? '已启用' : '已停用，该账号立即无法登录');
+}
+
+function addAccount(){
+  $('drTitle').textContent = '新增管理账号';
+  var h = '';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>登录账号<em>*</em></label><input id="a_user" placeholder="英文或数字，如 zhuli"></div>';
+  h += '<div class="field"><label>姓名<em>*</em></label><input id="a_name" placeholder="如 小周"></div>';
+  h += '</div>';
+  h += '<div class="field"><label>初始密码<em>*</em></label><input id="a_pwd" placeholder="至少 6 位"></div>';
+  h += '<div class="field"><label>角色</label><select id="a_role"><option>客服</option><option>超级管理员</option></select></div>';
+  h += '<div class="role-hint" style="margin-top:4px;margin-bottom:0">'
+    + '<b>客服：</b>能看概览、看订单并发货、看客户名单；<b>不能</b>改价格、不能发布作品、不能进账号管理。<br>'
+    + '<b>超级管理员：</b>全部权限，包括创建和停用别人的账号。</div>';
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
+    + '<button class="btn primary" onclick="saveAccount()">创建</button>';
+  openDrawer();
+}
+
+function saveAccount(){
+  var u = $('a_user').value.trim(), n = $('a_name').value.trim(), p = $('a_pwd').value.trim(), r = $('a_role').value;
+  if(!u || !n || !p){ toast('账号、姓名、密码都要填'); return; }
+  if(p.length < 6){ toast('密码至少 6 位'); return; }
+  if(ACCOUNTS.filter(function(a){ return a.user===u; }).length){ toast('这个账号已经存在'); return; }
+  ACCOUNTS.push({user:u, pwd:p, name:n, role:r, active:true, last:'从未登录'});
+  closeDrawer(); renderAccounts();
+  toast('已创建，把这个账号密码发给' + n);
+}
+
+/* ==================== 作品数据持久化（原型里用本地存储代替云数据库） ==================== */
+function loadWorks(){
+  var raw = null;
+  try{ raw = localStorage.getItem('gh_works'); }catch(e){}
+  if(raw){
+    try{
+      var a = JSON.parse(raw);
+      if(a && a.length){ WORKS = a; return; }
+    }catch(e){}
+  }
+  /* 本机没有草稿（换了电脑/清了缓存），就用已发布的配置当基线 */
+  if(REMOTE_CFG.works && REMOTE_CFG.works.length){ WORKS = REMOTE_CFG.works; }
+}
+function saveWorks(){
+  try{ localStorage.setItem('gh_works', JSON.stringify(WORKS)); }catch(e){}
+}
+
+/* ==================== 外观与配置 ==================== */
+var DEF_CFG = {
+  brand:{
+    name:'核樂不煩•STUDIO', sub:'只 做 核 桃 与 籽', city:'文玩核桃 · 杭州文三路',
+    sign:'— 核樂不煩 • STUDIO', good:'出品 · 工具自己做，核桃自己挑',
+    story:['何乐不为，核乐不烦。盘核桃这事，天天刷、天天盘，旁人看着烦，玩的人从不烦——名字就是这么来的。',
+           '专做文玩核桃十二年。狮子头、虎头、官帽，一年也就挑得出几十对能看的。每对都过我的手，边宽卡过尺，配对看过纹。',
+           '店在杭州文三路，随时欢迎来上手。看不懂的、拿不准的，加微信问我，不买也答。'],
+    douyin:'@核乐不烦', addr:'杭州市西湖区文三路 90 号', hours:'周二至周日 10:00–20:00', kefu:'每日 9:00–22:00'
+  },
+  theme:{paper:'#FFFFFF',surf:'#F6F5F2',ink:'#161513',ink2:'#6B6660',ink3:'#A8A29B',
+         red:'#9E3327',line:8,radius:10,font:'serif'},
+  layout:{cols:2,heroH:380,density:'normal',notice:true,quick:true,bar:true,price:true,video:true,kf:true},
+  notice:'本周上新 3 对狮子头 · 抖音直播间今晚 8 点开青皮',
+  hero:{id:'n1',kicker:'本 期 主 推 · 第 018 号',
+        title:'白狮子 45mm<br>矮桩满肉 · 精配一对', meta:'已盘半年 · 红润见底 · 误差 0.2mm'},
+  quick:[{label:'狮子头',cat:'walnut',sub:'狮子头',img:'n5'},{label:'虎头',cat:'walnut',sub:'虎头',img:'n2'},
+         {label:'官帽',cat:'walnut',sub:'官帽',img:'n3'},{label:'手串',cat:'bodhi',sub:'全部',img:'b3'}],
+  policy:['核桃为天然果核，纹路、边宽、脐形存在个体差异，不属于质量问题。',
+          '未上手 7 天内可退，上手盘玩后影响二次销售，不支持退换。',
+          '发货前拍摄存档照并附编号卡，与实物一致。',
+          '顺丰包邮，48 小时内发出。'],
+  ship:['48 小时内顺丰发出，保价已含。','发货前拍摄存档照并附编号卡，与实物一致。','收到请当天开箱验货，有问题当天联系。'],
+  pages:{
+    home:{heroImg:'', barTitle:'在 售', barSort:'按尺寸排 ›', endNote:'— 已 到 底 —'},
+    category:{title:'分类', empty:'这一档暂时没有货|换个尺寸或品种看看', footTpl:'— 共 {n} 件 · {cat} —'},
+    detail:{secSpec:'参 数', secStory:'来 历', secPolicy:'收 货 须 知',
+      videoTag:'上手转一圈 · 26 秒', shipTag:'顺丰包邮', btnKf:'问 问', btnBuy:'请 回 家'},
+    checkout:{title:'确认订单', shipTitle:'发 货 说 明', noteHint:'选填，如送礼需贺卡',
+      payBtn:'微 信 支 付', payHint:'支付服务由微信支付提供 · 资金直达商户',
+      termsWalnut:'我已看过<b>实拍图与上手视频</b>，知悉核桃的纹路、边宽差异<b>不属于质量问题</b>，并已阅读<b>退换规则</b>。',
+      termsBodhi:'我已看过<b>实拍图与上手视频</b>，知悉籽料的色差、纹路差异<b>不属于质量问题</b>，并已阅读<b>退换规则</b>。'},
+    success:{title:'这 对 是 您 的 了',
+      desc:'{item} 已下架，不会再卖给别人。<br>48 小时内顺丰发出，单号推送到微信。',
+      qrTitle:'加 个 微 信 吧', qrDesc:'盘玩、配对、下次到货<br>都在朋友圈先说',
+      qrName:'长按识别 · 企业微信', qrImg:''},
+    orders:{title:'我的', g1:'我 的 订 单', g2:'更 多',
+      foot:'— 全部实拍 · 一物一图 —', aboutLabel:'联系我 · 关于核樂不煩'},
+    order:{title:'订单详情', statusTitle:'待 发 货',
+      statusDesc:'48 小时内顺丰发出，保价已含。<br>盘玩中有任何问题，随时找我。',
+      btn1:'联系店家', btn2:'继续看'},
+    about:{shopImg:'', shopCap:'店在文三路，随时来上手',
+      qrTitle:'加 个 企 业 微 信', qrDesc:'每日上新第一时间发圈<br>配对、盘玩问题随时问',
+      qrName:'长按识别 · 企业微信', qrImg:'', btn:'一 键 联 系', declareTitle:'声 明',
+      declare:['本店所售为天然果核与籽料，纹路、色差、边宽存在个体差异，不属于质量问题。',
+               '所有作品实拍。不含象牙、犀角、玳瑁、珊瑚等濒危物种制品；不做「开光、辟邪、招财」等功效表述。',
+               '页面价格以当页为准，不承诺升值与投资回报。']},
+    publish:{title:'上新', upTip:'上传实拍图（最多 9 张）<br>建议：正面 / 侧面 / 底部脐 / 上手',
+      check:'已确认图片实拍、参数真实，文案不含功效与升值承诺', btn:'上 架'}
+  },
+  cats:{walnut:{label:'文玩核桃',subs:['全部','狮子头','虎头','官帽','公子帽']},
+        bodhi:{label:'菩提手串',subs:['全部','小金刚','猴头','凤眼']}}
+};
+var PRESETS = {
+  white:{name:'素纸白', sub:'最干净，图片最突出', theme:{paper:'#FFFFFF',surf:'#F6F5F2',ink:'#161513',ink2:'#6B6660',ink3:'#A8A29B',red:'#9E3327'}},
+  paper:{name:'宣纸暖', sub:'带一点纸的暖调', theme:{paper:'#FAF8F2',surf:'#F3EFE6',ink:'#1C1916',ink2:'#615A50',ink3:'#A79E91',red:'#8E3A2B'}},
+  stone:{name:'石灰青', sub:'冷、克制、少情绪', theme:{paper:'#FFFFFF',surf:'#F2F4F5',ink:'#15181A',ink2:'#5A6165',ink3:'#9AA1A5',red:'#2E4A5F'}},
+  tea:{name:'茶褐', sub:'老铺子气，压得住高价', theme:{paper:'#FBF9F5',surf:'#F2EDE4',ink:'#2A211A',ink2:'#6E6153',ink3:'#ADA294',red:'#6E4A2E'}}
+};
+var FONT_LABEL = {serif:'宋体（有书卷气）', sans:'黑体（现代干净）', kai:'楷体（手写感）'};
+
+var CFG_ED = null;
+
+function cfgMerge(a,b){
+  var o={},k;
+  for(k in a) o[k]=a[k];
+  if(!b) return o;
+  for(k in b) o[k] = (b[k] && typeof b[k]==='object' && !Array.isArray(b[k])) ? cfgMerge(a[k]||{}, b[k]) : b[k];
+  return o;
+}
+function cfgClone(){ return JSON.parse(JSON.stringify(DEF_CFG)); }
+function setPath(o,p,v){
+  var a=p.split('.'), t=o, i;
+  for(i=0;i<a.length-1;i++) t=t[a[i]];
+  t[a[a.length-1]] = v;
+}
+function getPath(o,p){
+  var a=p.split('.'), t=o, i;
+  for(i=0;i<a.length;i++){ if(t===undefined) return undefined; t=t[a[i]]; }
+  return t;
+}
+function loadCfg(){
+  var raw=null;
+  try{ raw = localStorage.getItem('gh_cfg'); }catch(e){}
+  var base = null;
+  if(raw){ try{ base = JSON.parse(raw); }catch(e){ base = null; } }
+  if(!base && REMOTE_CFG.cfg) base = REMOTE_CFG.cfg;
+  CFG_ED = cfgMerge(DEF_CFG, base);
+}
+
+var pvPage = 'home';
+var pvTimer;
+function schedulePreview(){
+  clearTimeout(pvTimer);
+  pvTimer = setTimeout(pushPreview, 320);
+}
+function pushPreview(){
+  var f = $('pvFrame');
+  if(!f) return;
+  f.src = 'index.html?embed=1&cfg=' + encodeURIComponent(JSON.stringify(CFG_ED)) + '#' + pvPage;
+}
+function setPvPage(k){
+  pvPage = k;
+  var ts = document.querySelectorAll('.pv-t');
+  for(var i=0;i<ts.length;i++) ts[i].classList.toggle('on', ts[i].getAttribute('data-p')===k);
+  pushPreview();
+}
+function onCfg(el, path){
+  var v = el.value;
+  if(el.type==='range') v = +v;
+  if(el.type==='checkbox') v = el.checked;
+  setPath(CFG_ED, path, v);
+  schedulePreview();
+}
+function onCfgNum(el, path){ setPath(CFG_ED, path, +el.value); schedulePreview(); }
+function onCfgTextarea(el, path, sep){
+  setPath(CFG_ED, path, el.value.split(sep||'\n').map(function(s){ return s.trim(); }).filter(Boolean));
+  schedulePreview();
+}
+function applyPreset(k){
+  var p = PRESETS[k].theme;
+  for(var f in p) CFG_ED.theme[f] = p[f];
+  renderTheme();
+  pushPreview();
+  toast('已切到「' + PRESETS[k].name + '」，别忘了保存');
+}
+function segClick(el, path, val){
+  setPath(CFG_ED, path, val);
+  var grp = el.parentElement.querySelectorAll('.seg-b');
+  for(var i=0;i<grp.length;i++) grp[i].classList.toggle('on', grp[i]===el);
+  schedulePreview();
+}
+/* ==================== 导出线上配置（网页版上线用） ==================== */
+var REMOTE_CFG = (window.SITE_CFG && typeof window.SITE_CFG==='object') ? window.SITE_CFG : {};
+
+function walkAtKeys(o, acc){
+  if(o==null) return;
+  if(typeof o==='string'){ if(o.charAt(0)==='@') acc[o.slice(1)] = 1; return; }
+  if(typeof o!=='object') return;
+  for(var k in o){ if(Object.prototype.hasOwnProperty.call(o,k)) walkAtKeys(o[k], acc); }
+}
+function buildCfgJs(){
+  var keys = {};
+  walkAtKeys(CFG_ED, keys);
+  WORKS.forEach(function(w){ if(typeof w.img==='string' && w.img.charAt(0)==='@') keys[w.img.slice(1)] = 1; });
+
+  var images = {}, miss = [];
+  for(var k in keys){
+    var url = null;
+    try{ url = localStorage.getItem('gh_img_'+k); }catch(e){}
+    if(!url && REMOTE_CFG.images) url = REMOTE_CFG.images[k] || null;
+    if(url) images[k] = url;
+    /* 只有长得像素材名的才算真缺图；抖音号这类以 @ 开头的文字不是图，跳过 */
+    else if(/^[A-Za-z0-9_-]+$/.test(k)) miss.push(k);
+  }
+
+  var d = new Date();
+  var stamp = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+  var payload = {v:2, at:stamp, cfg:CFG_ED, works:WORKS, images:images};
+
+  var head = '/* 核樂不煩 · STUDIO — 线上配置\n'
+    + '   本文件由后台「导出配置」自动生成，请不要手工编辑。\n'
+    + '   要改内容：回后台改 → 导出 → 覆盖这个文件 → 提交，网站即更新。\n'
+    + '   生成时间：' + stamp + ' ｜ 作品 ' + WORKS.length + ' 件 ｜ 图 ' + Object.keys(images).length + ' 张\n'
+    + '*/\n';
+  return {text: head + 'window.SITE_CFG = ' + JSON.stringify(payload, null, 1) + ';\n', miss:miss};
+}
+function downloadText(name, text){
+  var blob = new Blob([text], {type:'text/javascript;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.parentNode.removeChild(a); }, 200);
+}
+function exportCfg(){
+  var r = buildCfgJs();
+  downloadText('cfg.js', r.text);
+  var kb = Math.round(r.text.length/1024);
+  if(r.miss.length){
+    toast('已导出 ' + kb + 'KB，但有 ' + r.miss.length + ' 张图缺失，页面会空图');
+  }else{
+    toast('已导出 cfg.js（' + kb + 'KB），覆盖站点里的同名文件即上线');
+  }
+}
+function copyCfg(){
+  var r = buildCfgJs();
+  try{
+    navigator.clipboard.writeText(r.text).then(function(){ toast('配置已复制，粘到 cfg.js 里即可'); },
+      function(){ toast('复制失败，用「导出配置」下载文件'); });
+  }catch(e){ toast('复制失败，用「导出配置」下载文件'); }
+}
+
+function saveCfg(){
+  try{
+    localStorage.setItem('gh_cfg', JSON.stringify(CFG_ED));
+    toast('已保存，客户下次打开就是新配置');
+  }catch(e){ toast('本地存不了，用「新窗口打开」这个链接'); }
+  pushPreview();
+}
+function resetCfg(){
+  CFG_ED = cfgClone();
+  try{ localStorage.removeItem('gh_cfg'); }catch(e){}
+  renderTheme();
+  pushPreview();
+  toast('已恢复出厂设置');
+}
+function openCfg(){
+  window.open('index.html?cfg=' + encodeURIComponent(JSON.stringify(CFG_ED)) + '#home', '_blank');
+}
+function pickHero(el){
+  var w = WORKS.filter(function(x){ return x.id===el.value; })[0];
+  if(!w) return;
+  CFG_ED.hero.id = w.id;
+  CFG_ED.hero.kicker = '本 期 主 推 · 第 ' + w.no + ' 号';
+  CFG_ED.hero.title = w.t + ' ' + String(w.spec||'').split(' · ')[0];
+  CFG_ED.hero.meta = w.spec || '';
+  if(S.page==='pages') renderPages(); else renderTheme();
+  pushPreview();
+  toast('主推已换成「' + w.t + '」');
+}
+
+function fld(label, path, type, ph){
+  var v = getPath(CFG_ED, path);
+  if(v===undefined) v='';
+  if(type==='color'){
+    return '<div class="cf"><label>'+label+'</label>'
+      + '<div class="color-row"><input type="color" value="'+v+'" oninput="onCfg(this,\''+path+'\')">'
+      + '<span class="hex">'+v.toUpperCase()+'</span></div></div>';
+  }
+  return '<div class="cf"><label>'+label+'</label>'
+    + '<input value="'+String(v).replace(/"/g,'&quot;')+'" placeholder="'+(ph||'')+'" oninput="onCfg(this,\''+path+'\')"></div>';
+}
+function sw(key, path, label){
+  var on = getPath(CFG_ED, path) ? ' on' : '';
+  return '<div class="sw-row"><div class="sw-t">'+label+'</div>'
+    + '<div class="sw'+on+'" onclick="toggleSw(this,\''+path+'\')"><i></i></div></div>';
+}
+function toggleSw(el, path){
+  var v = !getPath(CFG_ED, path);
+  setPath(CFG_ED, path, v);
+  el.classList.toggle('on', v);
+  schedulePreview();
+}
+function seg(path, opts, cur){
+  var h = '<div class="seg">';
+  for(var i=0;i<opts.length;i++){
+    var o = opts[i];
+    h += '<div class="seg-b'+(o[0]===cur?' on':'')+'" onclick="segClick(this,\''+path+'\',\''+o[0]+'\')">'+o[1]+'</div>';
+  }
+  return h + '</div>';
+}
+
+function renderTheme(){
+  var t = CFG_ED.theme, L = CFG_ED.layout, B = CFG_ED.brand;
+  var h = '<div class="cfg-wrap"><div class="cfg-form">';
+
+  /* 主题预设 */
+  h += '<div class="card cfg-card"><div class="card-h"><h2>配色</h2><span class="r">点一下整体换肤</span></div><div class="cfg-body">';
+  h += '<div class="presets">';
+  for(var k in PRESETS){
+    var p = PRESETS[k];
+    var act = (t.paper.toUpperCase()===p.theme.paper.toUpperCase() && t.red.toUpperCase()===p.theme.red.toUpperCase()) ? ' on' : '';
+    h += '<div class="preset'+act+'" onclick="applyPreset(\''+k+'\')">'
+      +   '<div class="sw-dots"><i style="background:'+p.theme.paper+';border-color:#D8D4CC"></i>'
+      +   '<i style="background:'+p.theme.ink+'"></i><i style="background:'+p.theme.red+'"></i></div>'
+      +   '<div class="p-name">'+p.name+'</div><div class="p-sub">'+p.sub+'</div></div>';
+  }
+  h += '</div>';
+  h += '<div class="cfg-2">' + fld('底色', 'theme.paper', 'color') + fld('主色（价格 / 强调）', 'theme.red', 'color') + '</div>';
+  h += '<div class="cfg-2">' + fld('正文色', 'theme.ink', 'color') + fld('次要色', 'theme.ink2', 'color') + '</div>';
+  h += '<div class="cf"><label>分隔线强度 <b id="oLine">'+t.line+'</b>%</label>'
+    +  '<input type="range" min="2" max="20" value="'+t.line+'" oninput="onCfgNum(this,\'theme.line\');document.getElementById(\'oLine\').textContent=this.value"></div>';
+  h += '<div class="cf"><label>圆角 <b id="oR">'+t.radius+'</b> px</label>'
+    +  '<input type="range" min="0" max="20" value="'+t.radius+'" oninput="onCfgNum(this,\'theme.radius\');document.getElementById(\'oR\').textContent=this.value"></div>';
+  h += '<div class="cf"><label>标题字体</label>' + seg('theme.font', [['serif','宋体'],['sans','黑体'],['kai','楷体']], t.font) + '</div>';
+  h += '</div></div>';
+
+  /* 布局 */
+  h += '<div class="card cfg-card"><div class="card-h"><h2>布局</h2><span class="r">改结构，不只是改颜色</span></div><div class="cfg-body">';
+  h += '<div class="cf"><label>商品卡片列数</label>' + seg('layout.cols', [['1','单列大图'],['2','双列']], String(L.cols)) + '</div>';
+  h += '<div class="cf"><label>首页头图高度 <b id="oH">'+L.heroH+'</b> px</label>'
+    +  '<input type="range" min="180" max="480" step="10" value="'+L.heroH+'" oninput="onCfgNum(this,\'layout.heroH\');document.getElementById(\'oH\').textContent=this.value"></div>';
+  h += '<div class="cf"><label>留白密度</label>' + seg('layout.density', [['compact','紧凑'],['normal','标准'],['roomy','宽松']], L.density) + '</div>';
+  h += '<div class="cfg-2" style="margin-top:4px">';
+  h += '<div style="padding:10px 0">' + sw('','layout.notice','顶部公告条') + '</div>';
+  h += '<div style="padding:10px 0">' + sw('','layout.quick','分类快捷入口') + '</div>';
+  h += '<div style="padding:10px 0">' + sw('','layout.bar','「在售」标题条') + '</div>';
+  h += '<div style="padding:10px 0">' + sw('','layout.price','显示价格') + '</div>';
+  h += '<div style="padding:10px 0">' + sw('','layout.video','详情页上手视频') + '</div>';
+  h += '<div style="padding:10px 0">' + sw('','layout.kf','详情页「问问」按钮') + '</div>';
+  h += '</div></div></div>';
+
+  /* 分类 */
+  h += '<div class="card cfg-card"><div class="card-h"><h2>分类结构</h2><span class="r">用逗号隔开，顺序即显示顺序</span></div><div class="cfg-body">';
+  for(var ck in CFG_ED.cats){
+    h += '<div class="cf"><label>' + (ck==='walnut'?'核桃类的子分类':'菩提类的子分类') + '</label>'
+      +  '<input value="'+CFG_ED.cats[ck].subs.join('，')+'" '
+      +  'onchange="setPath(CFG_ED,\'cats.'+ck+'.subs\',this.value.split(/[，,]/).map(function(s){return s.trim()}).filter(Boolean));schedulePreview()"></div>';
+  }
+  h += '<div class="cf-note">改这里不用改代码。加一个新品种（比如「四座楼」），列表里立刻多一个可筛的标签；没有对应货时显示「这一档暂时没有货」。</div>';
+  h += '</div></div>';
+
+  /* 指向页面管理 */
+  h += '<div class="card cfg-card"><div class="card-h"><h2>文字、图片、声明</h2><span class="r">已拆到独立模块</span></div><div class="cfg-body">'
+    +  '<div class="cf-note" style="margin-bottom:12px">店名、公告、故事、关于页声明、企微二维码、门店照这些，都在「页面管理」里按页改，一个页面一处，不会混。</div>'
+    +  '<button class="btn" onclick="go(\'pages\')">去「页面管理」</button>'
+    +  '</div></div>';
+
+  h += '</div>';
+
+  /* 预览 */
+  h += '<div class="cfg-prev"><div class="prev-card">'
+    + '<div class="prev-hd"><span>实时预览</span><span class="r" id="pvHint">改动 0.3 秒后刷新</span></div>'
+    + '<div class="prev-tabs">'
+    + '<span class="pv-t'+(pvPage==='home'?' on':'')+'" data-p="home" onclick="setPvPage(\'home\')">首页</span>'
+    + '<span class="pv-t'+(pvPage==='category'?' on':'')+'" data-p="category" onclick="setPvPage(\'category\')">分类</span>'
+    + '<span class="pv-t'+(pvPage==='detail'?' on':'')+'" data-p="detail" onclick="setPvPage(\'detail\')">详情</span>'
+    + '<span class="pv-t'+(pvPage==='about'?' on':'')+'" data-p="about" onclick="setPvPage(\'about\')">关于</span>'
+    + '</div>'
+    + '<div class="prev-stage"><iframe id="pvFrame" scrolling="no"></iframe></div>'
+    + '<div class="prev-ft">'
+    + '<button class="btn primary" id="saveBtn" style="height:34px;flex:1" onclick="saveToCloud()">保存到服务器</button>'
+    + '<button class="btn" style="height:34px" onclick="saveCfg()">本机草稿</button>'
+    + '</div>'
+    + '<div class="prev-ft" style="padding-top:0">'
+    + '<button class="btn" style="height:30px;flex:1" onclick="openCfg()">新窗口看</button>'
+    + '<button class="btn" style="height:30px" onclick="resetCfg()">恢复默认</button>'
+    + '</div>'
+    + '<div class="prev-note">改完点「保存到服务器」，直接写进云端数据库，客户刷新就是新的，不用重新部署。</div>'
+    + '</div></div>';
+
+  h += '</div>';
+  $('content').innerHTML = h;
+  pushPreview();
+}
+
+/* ==================== 页面管理 ==================== */
+var PAGE_TABS = [
+  {k:'home',     label:'首页',     hash:'home'},
+  {k:'category', label:'分类',     hash:'category'},
+  {k:'detail',   label:'作品详情', hash:'detail'},
+  {k:'checkout', label:'确认订单', hash:'checkout'},
+  {k:'success',  label:'支付成功', hash:'success'},
+  {k:'orders',   label:'我的',     hash:'orders'},
+  {k:'order',    label:'订单详情', hash:'order'},
+  {k:'about',    label:'关于 · 企微', hash:'about'},
+  {k:'publish',  label:'上新',     hash:'publish'}
+];
+var ASSETS = ['n1','n2','n3','n4','n5','b1','b2','b3'];
+
+var PAGE_META = {
+  home:{
+    hint:'首页决定第一眼。头图上压了一层暗角，只留店名；下面是主推的标题、参数和价格。头图留空就跟着主推作品走，换了主推，图自动跟着换。',
+    groups:[
+      {n:'图片', fs:[
+        {t:'img', p:'pages.home.heroImg', label:'首页头图', tip:'建议竖图 3:4，深底侧光；留空 = 用主推作品首图'}
+      ]},
+      {n:'文字', fs:[
+        {t:'pick', p:'hero.id', label:'主推作品'},
+        {t:'text', p:'hero.kicker', label:'主推上方小字'},
+        {t:'html', p:'hero.title', label:'主推大标题', tip:'可以写 &lt;br&gt; 换行'},
+        {t:'text', p:'hero.meta', label:'主推参数行'},
+        {t:'text', p:'pages.home.barTitle', label:'「在售」标题条'},
+        {t:'text', p:'pages.home.barSort', label:'排序提示文字'},
+        {t:'text', p:'pages.home.endNote', label:'列表底部提示'}
+      ]},
+      {n:'公告 / 声明', fs:[
+        {t:'text', p:'notice', label:'顶部公告条'},
+        {t:'note', label:'公告条只在首页出现，一行写完。它是首页唯一的「红色卖点」，写今晚几点开播、本周上了几对，比写「欢迎光临」有用。'}
+      ]},
+      {n:'分类快捷入口', fs:[
+        {t:'quick', p:'quick', label:'四个入口的图、名字、跳转'}
+      ]}
+    ]
+  },
+
+  category:{
+    hint:'分类页骨架是固定的：品类 → 子分类 → 尺寸 → 排序。能改的是标题、空状态和页脚。要加新品类或新子分类，去「外观与配置 · 分类结构」。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.category.title', label:'页面标题'},
+        {t:'text', p:'pages.category.footTpl', label:'页脚', tip:'{n} 会变成件数，{cat} 会变成品类名'}
+      ]},
+      {n:'空状态', fs:[
+        {t:'area', p:'pages.category.empty', label:'筛不到货时的提示', tip:'用 | 分两行'},
+        {t:'note', label:'「这一档暂时没有货」比「暂无数据」体面。空状态写得好，客户会换个尺寸继续看，而不是退出去。'}
+      ]}
+    ]
+  },
+
+  detail:{
+    hint:'详情页的文字骨架是：参数 → 来历 → 收货须知。单件作品的标题、参数、来历在「作品管理」里改，这里改的是所有作品共用的部分。',
+    groups:[
+      {n:'分区标题', fs:[
+        {t:'text', p:'pages.detail.secSpec', label:'第一段：参数'},
+        {t:'text', p:'pages.detail.secStory', label:'第二段：来历'},
+        {t:'text', p:'pages.detail.secPolicy', label:'第三段：提示'}
+      ]},
+      {n:'标注与按钮', fs:[
+        {t:'text', p:'pages.detail.videoTag', label:'视频角标'},
+        {t:'text', p:'pages.detail.shipTag', label:'价格旁小标'},
+        {t:'text', p:'pages.detail.btnKf', label:'左边按钮'},
+        {t:'text', p:'pages.detail.btnBuy', label:'右边按钮（买）'}
+      ]},
+      {n:'声明：收货须知', fs:[
+        {t:'lines', p:'policy', label:'一行一条，显示在详情页底部', tip:'这里写的是所有作品通用的退换规则'},
+        {t:'note', label:'声明是给自己留后路，不是给客户设门槛。写清「天然果核的纹路差异不算质量问题」「上手盘玩后不支持退换」，比事后解释有效得多。'}
+      ]}
+    ]
+  },
+
+  checkout:{
+    hint:'结算页最容易出纠纷。勾选声明要写清楚「什么不算质量问题」，写得越明白，后面扯皮越少。核桃和手串分两套，因为客户在意的点不一样。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.checkout.title', label:'页面标题'},
+        {t:'text', p:'pages.checkout.shipTitle', label:'发货说明标题'},
+        {t:'text', p:'pages.checkout.noteHint', label:'备注栏提示'},
+        {t:'text', p:'pages.checkout.payBtn', label:'支付按钮文字'},
+        {t:'text', p:'pages.checkout.payHint', label:'支付按钮下方小字'}
+      ]},
+      {n:'声明：勾选条款', fs:[
+        {t:'html', p:'pages.checkout.termsWalnut', label:'核桃类（可用 &lt;b&gt;&lt;/b&gt; 加粗）'},
+        {t:'html', p:'pages.checkout.termsBodhi', label:'菩提籽类（可用 &lt;b&gt;&lt;/b&gt; 加粗）'},
+        {t:'note', label:'这两段是订单页的必勾项。客户付款前看到的最后一段话就是它，写具体、写人话，别写成法律条款。'}
+      ]},
+      {n:'发货说明', fs:[
+        {t:'lines', p:'ship', label:'一行一条，显示在结算页'}
+      ]}
+    ]
+  },
+
+  success:{
+    hint:'支付成功后客户最容易慌：怕被别人买走、怕没单号。这段话写成什么样，决定他要不要来问你一遍。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.success.title', label:'大标题'},
+        {t:'html', p:'pages.success.desc', label:'说明文字', tip:'{item} 会替换成刚买的作品名，可写 &lt;br&gt; 换行'}
+      ]},
+      {n:'图片：企业微信二维码', fs:[
+        {t:'img', p:'pages.success.qrImg', label:'企微活码 / 个人二维码', tip:'留空显示占位二维码；上传真实二维码后自动替换'},
+        {t:'text', p:'pages.success.qrTitle', label:'标题'},
+        {t:'html', p:'pages.success.qrDesc', label:'说明'},
+        {t:'text', p:'pages.success.qrName', label:'二维码下方小字'}
+      ]}
+    ]
+  },
+
+  orders:{
+    hint:'「我的」页是客户回访的入口。这里的字改得少，但改一次就影响所有老客看到的页面。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.orders.title', label:'页面标题'},
+        {t:'text', p:'pages.orders.g1', label:'第一个分组标题'},
+        {t:'text', p:'pages.orders.g2', label:'第二个分组标题'},
+        {t:'text', p:'pages.orders.aboutLabel', label:'关于入口那行字'},
+        {t:'text', p:'pages.orders.foot', label:'页面底部小字'}
+      ]}
+    ]
+  },
+
+  order:{
+    hint:'订单详情页是客户看物流的地方。状态标题和说明按「待发货」写，可催可安抚；发货后这段文字不常被看到。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.order.title', label:'页面标题'},
+        {t:'text', p:'pages.order.statusTitle', label:'状态标题'},
+        {t:'html', p:'pages.order.statusDesc', label:'状态说明', tip:'可写 &lt;br&gt; 换行'},
+        {t:'text', p:'pages.order.btn1', label:'左边按钮'},
+        {t:'text', p:'pages.order.btn2', label:'右边按钮'}
+      ]}
+    ]
+  },
+
+  about:{
+    hint:'关于页是信任页：照片、故事、联系方式、声明都在这。声明那三条别删——平台审核、客户纠纷都用得上。改完记得保存。',
+    groups:[
+      {n:'图片：门店照', fs:[
+        {t:'img', p:'pages.about.shopImg', label:'门店 / 工作台照片', tip:'横图更好看；留空则整块隐藏'},
+        {t:'text', p:'pages.about.shopCap', label:'图注'}
+      ]},
+      {n:'文字', fs:[
+        {t:'text', p:'brand.city', label:'店名下方小字'},
+        {t:'lines', p:'brand.story', label:'故事（一行一段）', tip:'这段决定客户信不信你'},
+        {t:'text', p:'brand.good', label:'GOODHAO 后面那行'},
+        {t:'text', p:'brand.sign', label:'落款'}
+      ]},
+      {n:'联系方式', fs:[
+        {t:'text', p:'brand.addr', label:'实体店地址'},
+        {t:'text', p:'brand.hours', label:'营业时间'},
+        {t:'text', p:'brand.douyin', label:'抖音号'},
+        {t:'text', p:'brand.kefu', label:'客服在线时间'}
+      ]},
+      {n:'图片：企业微信二维码', fs:[
+        {t:'img', p:'pages.about.qrImg', label:'企微活码', tip:'留空显示占位二维码'},
+        {t:'text', p:'pages.about.qrTitle', label:'标题'},
+        {t:'html', p:'pages.about.qrDesc', label:'说明'},
+        {t:'text', p:'pages.about.qrName', label:'二维码下方小字'},
+        {t:'text', p:'pages.about.btn', label:'底部「联系」按钮'}
+      ]},
+      {n:'声明', fs:[
+        {t:'text', p:'pages.about.declareTitle', label:'声明标题'},
+        {t:'lines', p:'pages.about.declare', label:'一行一条', tip:'清空这一段，整块声明就隐藏'},
+        {t:'note', label:'三条底线：天然料有差异不算质量问题；不做功效与升值承诺；不含濒危物种制品。写得越清楚，越不怕人问。'}
+      ]}
+    ]
+  },
+
+  publish:{
+    hint:'「上新」页只在后台开放给管理员，客户看不到。但这页的文案也算门面——万一哪天要开放给店员用。',
+    groups:[
+      {n:'文字', fs:[
+        {t:'text', p:'pages.publish.title', label:'页面标题'},
+        {t:'html', p:'pages.publish.upTip', label:'上传框里的提示', tip:'可写 &lt;br&gt; 换行'},
+        {t:'text', p:'pages.publish.check', label:'发布前确认那行'},
+        {t:'text', p:'pages.publish.btn', label:'按钮文字'}
+      ]}
+    ]
+  }
+};
+
+function adminImg(k){
+  if(!k) return '';
+  if(/^(data:|https?:|\.\/|\/)/.test(k)) return k;
+  if(k.charAt(0)==='@'){
+    var key = k.slice(1);
+    var local = '';
+    try{ local = localStorage.getItem('gh_img_'+key) || ''; }catch(e){}
+    if(local) return local;
+    return (REMOTE_CFG.images && REMOTE_CFG.images[key]) || '';
+  }
+  return './assets/'+k+'.jpg';
+}
+function onLines(el, p){
+  setPath(CFG_ED, p, el.value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean));
+  schedulePreview();
+}
+
+function pf(f){
+  if(f.t==='note') return '<div class="cf-note" style="margin-bottom:12px">'+f.label+'</div>';
+  var v = getPath(CFG_ED, f.p);
+  if(v===undefined) v = '';
+
+  if(f.t==='img')   return imgField(f, v);
+  if(f.t==='pick')  return pickField(f, v);
+  if(f.t==='quick') return quickField();
+
+  var head = '<div class="cf"><label>'+f.label+'</label>';
+  var tip = f.tip ? '<div class="cf-tip">'+f.tip+'</div>' : '';
+  if(f.t==='lines'){
+    return head + '<textarea rows="4" oninput="onLines(this,\''+f.p+'\')">'+esc((v||[]).join('\n'))+'</textarea>'+tip+'</div>';
+  }
+  if(f.t==='html' || f.t==='area'){
+    return head + '<textarea rows="'+(f.t==='html'?2:3)+'" oninput="onCfg(this,\''+f.p+'\')">'+esc(v)+'</textarea>'+tip+'</div>';
+  }
+  return head + '<input value="'+esc(v)+'" placeholder="'+(f.tip?'':(f.ph||''))+'" oninput="onCfg(this,\''+f.p+'\')">'+tip+'</div>';
+}
+
+function imgField(f, v){
+  var src = adminImg(v);
+  var h = '<div class="cf"><label>'+f.label+'</label><div class="imgf">';
+  h += '<div class="imgf-box">' + (src ? '<img src="'+src+'">' : '未设置') + '</div>';
+  h += '<div class="imgf-act">';
+  h += '<div style="display:flex;gap:7px">'
+    +  '<button class="btn sm" onclick="pickImg(\''+f.p+'\')">上传图片</button>'
+    +  (v ? '<button class="btn sm" onclick="clearImg(\''+f.p+'\')">清除</button>' : '')
+    +  '</div>';
+  if(f.tip) h += '<div class="cf-tip">'+f.tip+'</div>';
+  h += '<div class="cf-tip">或用素材库：</div><div class="asset-row">';
+  ASSETS.forEach(function(a){
+    h += '<button class="asset-pick" title="'+a+'" onclick="setImg(\''+f.p+'\',\''+a+'\')">'
+      +  '<img src="./assets/'+a+'.jpg" alt=""></button>';
+  });
+  h += '</div></div></div></div>';
+  return h;
+}
+
+function pickField(f, v){
+  var h = '<div class="cf"><label>'+f.label+'</label><select onchange="pickHero(this)">';
+  var hit = false;
+  WORKS.filter(function(w){ return w.status==='在售'; }).forEach(function(w){
+    var sel = (w.id===v); if(sel) hit = true;
+    h += '<option value="'+w.id+'"'+(sel?' selected':'')+'>'+w.no+' · '+w.t+' · '+w.spec+'</option>';
+  });
+  if(!hit) h += '<option value="" selected>（当前主推不在在售列表里）</option>';
+  return h + '</select><div class="cf-tip">换主推 = 首页头图、标题、参数、价格一起换</div></div>';
+}
+
+function quickField(){
+  var h = '<div class="cf"><label>分类快捷入口</label>';
+  CFG_ED.quick.forEach(function(q, i){
+    h += '<div class="qrow">'
+      +  '<div class="qrow-img" onclick="pickImg(\'quick.'+i+'.img\')">'
+      +    '<img src="'+adminImg(q.img)+'" alt=""><em>换图</em></div>'
+      +  '<div style="flex:1;min-width:0">'
+      +    '<input value="'+esc(q.label)+'" placeholder="名称，如 狮子头" oninput="setPath(CFG_ED,\'quick.'+i+'.label\',this.value);schedulePreview()">'
+      +    '<select onchange="setQuick(this,'+i+')">';
+    for(var ck in CFG_ED.cats){
+      h += '<option value="'+ck+'|全部"'+(q.cat===ck && q.sub==='全部'?' selected':'')+'>'+CFG_ED.cats[ck].label+' · 全部</option>';
+      CFG_ED.cats[ck].subs.forEach(function(s){
+        if(s==='全部') return;
+        var sel = (q.cat===ck && q.sub===s);
+        h += '<option value="'+ck+'|'+s+'"'+(sel?' selected':'')+'>'+CFG_ED.cats[ck].label+' · '+s+'</option>';
+      });
+    }
+    h += '</select></div></div>';
+  });
+  return h + '<div class="cf-tip">点左侧小图换图。名字和跳转都能改，四个位置固定。</div></div>';
+}
+
+function setQuick(el, i){
+  var a = el.value.split('|');
+  CFG_ED.quick[i].cat = a[0];
+  CFG_ED.quick[i].sub = a[1];
+  schedulePreview();
+}
+function setImg(p, name){
+  setPath(CFG_ED, p, name);
+  renderPages(); pushPreview();
+  toast('图片已换成素材「'+name+'」，记得保存');
+}
+
+/* 图片上传：压到 1000px 内，存 localStorage，配置里只留一个 @key */
+var imgTarget = null;
+function pickImg(p){ imgTarget = p; var el=$('imgFile'); el.value=''; el.click(); }
+function onImgFile(e){
+  var f = e.target.files && e.target.files[0];
+  if(!f || !imgTarget) return;
+  var p = imgTarget;
+  var rd = new FileReader();
+  rd.onload = function(){
+    var im = new Image();
+    im.onload = function(){
+      var max = 1000, w = im.width, h = im.height;
+      if(w>max || h>max){ var r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
+      var cv = document.createElement('canvas');
+      cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(im, 0, 0, w, h);
+      var url = cv.toDataURL('image/jpeg', .82);
+      var key = 'i' + Date.now().toString(36);
+      var ok = true;
+      try{ localStorage.setItem('gh_img_'+key, url); }catch(err){ ok = false; }
+      setPath(CFG_ED, p, ok ? '@'+key : url);
+      renderPages(); pushPreview();
+      toast(ok ? '图片已换上，记得保存发布' : '本地空间不够，图片只是临时的');
+    };
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+}
+function clearImg(p){
+  setPath(CFG_ED, p, '');
+  renderPages(); pushPreview();
+  toast('已清除，这块内容不再显示');
+}
+
+function resetPage(pk){
+  var base = cfgClone();
+  PAGE_META[pk].groups.forEach(function(g){
+    g.fs.forEach(function(f){
+      if(!f.p) return;
+      var v = getPath(base, f.p);
+      setPath(CFG_ED, f.p, v===undefined ? '' : JSON.parse(JSON.stringify(v)));
+    });
+  });
+  renderPages(); pushPreview();
+  toast('本页已恢复默认');
+}
+
+function renderPages(){
+  if(!can('pages')){ $('content').innerHTML = '<div class="empty-row">当前账号没有权限</div>'; return; }
+  var pk = S.pageKey || 'home';
+  var meta = PAGE_META[pk];
+  S.pageKey = pk;
+  pvPage = PAGE_TABS.filter(function(t){ return t.k===pk; })[0].hash;
+
+  var h = '<div class="pg-tabs">';
+  PAGE_TABS.forEach(function(t){
+    h += '<button class="pg-t'+(t.k===pk?' on':'')+'" onclick="S.pageKey=\''+t.k+'\';pvPage=\''+t.hash+'\';renderPages()">'+t.label+'</button>';
+  });
+  h += '</div>';
+
+  h += '<div class="cfg-wrap"><div class="cfg-form">';
+  h += '<div class="role-hint" style="margin-bottom:14px;max-width:none">'+meta.hint+'</div>';
+
+  meta.groups.forEach(function(g){
+    h += '<div class="card cfg-card"><div class="card-h"><h2>'+g.n+'</h2>'
+      +  '<span class="r">改完自动进预览</span></div><div class="cfg-body">';
+    if(g.n.indexOf('快捷')>-1 || g.n.indexOf('四个')>-1){
+      h += pf(g.fs[0]);
+    }else{
+      var two = g.fs.length>2 && g.fs.every(function(f){ return f.t==='text'; });
+      if(two){
+        h += '<div class="cfg-2">';
+        g.fs.forEach(function(f){ h += pf(f); });
+        h += '</div>';
+      }else{
+        g.fs.forEach(function(f){ h += pf(f); });
+      }
+    }
+    h += '</div></div>';
+  });
+  h += '</div>';
+
+  /* 预览 */
+  h += '<div class="cfg-prev"><div class="prev-card">'
+    +  '<div class="prev-hd"><span>实时预览 · ' + (PAGE_TABS.filter(function(t){ return t.k===pk; })[0].label) + '</span>'
+    +  '<span class="r">0.3 秒后刷新</span></div>'
+    +  '<div class="prev-stage"><iframe id="pvFrame" scrolling="no"></iframe></div>'
+    +  '<div class="prev-ft">'
+    +  '<button class="btn primary" id="saveBtn" style="height:34px;flex:1" onclick="saveToCloud()">保存到服务器</button>'
+    +  '<button class="btn" style="height:34px" onclick="saveCfg()">本机草稿</button>'
+    +  '</div>'
+    +  '<div class="prev-ft" style="padding-top:0">'
+    +  '<button class="btn" style="height:30px;flex:1" onclick="openCfg()">新窗口看</button>'
+    +  '<button class="btn" style="height:30px;flex:1" onclick="resetPage(\''+pk+'\')">恢复本页默认</button>'
+    +  '</div>'
+    +  '<div class="prev-note">这个预览就是客户看到的样子，改一个字、换一张图，0.3 秒后就跟着变。满意了点「导出配置上线」。</div>'
+    +  '</div></div>';
+
+  h += '</div>';
+  $('content').innerHTML = h;
+  pushPreview();
+  $('pageTitle').textContent = '页面管理 · ' + PAGE_TABS.filter(function(t){ return t.k===pk; })[0].label;
+}
+
+/* ==================== 抽屉 ==================== */
+function openDrawer(){ $('mask').classList.add('on'); $('drawer').classList.add('on'); }
+function closeDrawer(){ $('mask').classList.remove('on'); $('drawer').classList.remove('on'); }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDrawer(); });
+
+(function boot(){
+  loadCfg();
+  loadWorks();
+  $('lgCode').addEventListener('keydown', function(e){ if(e.key==='Enter') doLogin(); });
+  $('lgUser').addEventListener('keydown', function(e){ if(e.key==='Enter') sendCode(); });
+  var d = new Date();
+  $('todayPill').textContent = d.getFullYear() + ' 年 ' + (d.getMonth()+1) + ' 月 ' + d.getDate() + ' 日';
+
+  var q = new URLSearchParams(location.search);
+  var pg = q.get('pg');
+  if(pg && PAGE_META[pg]){ S.pageKey = pg; }
+  resumeSession();
+})();
+</script>
+</body>
+</html>
