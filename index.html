@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>核樂不煩 · STUDIO | 文玩核桃 · 菩提手串</title>
+<meta name="theme-color" content="#FFFFFF">
+<meta name="description" content="只做文玩核桃与菩提籽手串。每对过手挑过、卡过尺，杭州文三路实体店，随时可上手。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="核樂不煩 · STUDIO">
+<meta property="og:description" content="只 做 核 桃 与 籽 · 杭州文三路，随时可上手">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23FAF6EE'/><circle cx='16' cy='16' r='6.5' fill='%239E3327'/></svg>">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --surf:#F6F5F2;
+  --card:#FFFFFF;
+  --ink:#161513;
+  --ink2:#6B6660;
+  --ink3:#A8A29B;
+  --red:#9E3327;
+  --red2:#C0483B;
+  --line:rgba(22,21,19,.08);
+  --serif:"Songti SC","STZhongsong","SimSun","Noto Serif SC",serif;
+  --sans:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;padding:32px 16px 56px;min-height:100vh;
+  background:#E8E6E1;
+  font-family:var(--sans);color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+}
+.stage{display:flex;flex-direction:column;align-items:center;gap:20px}
+
+.phone{
+  width:375px;height:812px;position:relative;flex-shrink:0;
+  background:var(--paper);border-radius:46px;
+  border:1px solid rgba(22,21,19,.10);
+  box-shadow:0 30px 60px -30px rgba(20,18,15,.28),0 0 0 9px #F1F0EC;
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.statusbar{height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;font-size:12px;color:var(--ink);z-index:30;position:relative}
+.phone.dark-top .statusbar{position:absolute;top:0;left:0;right:0;color:#FFFFFF;background:transparent;z-index:40}
+.statusbar b{font-weight:600;font-size:13px;letter-spacing:.3px}
+.statusbar .sig{display:flex;align-items:center;gap:5px}
+
+.screen{flex:1;position:relative;overflow:hidden}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:none;scrollbar-width:none}
+.page::-webkit-scrollbar{display:none}
+.page.active{display:block;animation:fade .24s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.nav{position:sticky;top:0;z-index:20;height:46px;display:flex;align-items:center;
+  padding:0 12px;background:rgba(255,255,255,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.nav .back{width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  background:none;border:0;padding:0;cursor:pointer;color:var(--ink)}
+.nav .title{flex:1;text-align:center;font-size:15px;font-family:var(--serif);letter-spacing:2px}
+.nav .spacer{width:32px}
+
+.hero{position:relative;height:380px;overflow:hidden;background:#171614}
+.hero>img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.18)}
+.hero-fade{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(20,18,15,.72) 0%,rgba(20,18,15,.52) 16%,rgba(20,18,15,.14) 38%,rgba(20,18,15,0) 52%)}
+.hero-top{position:absolute;top:54px;left:20px;right:20px;display:flex;align-items:center;gap:11px}
+.seal{width:30px;height:30px;background:var(--red);border-radius:1px;flex-shrink:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#FFFFFF;font-family:var(--serif);font-size:12px;line-height:1.05;letter-spacing:1px;
+  padding-top:1px}
+.seal span{display:block}
+.seal.one{font-size:18px;letter-spacing:0;padding-top:0;line-height:1}
+.shop{color:#FFFFFF;font-family:var(--serif);font-size:17px;letter-spacing:1.5px;
+  font-weight:500;white-space:nowrap;
+  text-shadow:0 1px 10px rgba(0,0,0,.5)}
+.shop small{display:block;font-family:var(--sans);font-size:9px;letter-spacing:2px;
+  opacity:.88;margin-top:5px;font-weight:400;white-space:nowrap;
+  text-shadow:0 1px 5px rgba(0,0,0,.55)}
+.hero-info{padding:20px 18px 2px}
+.kicker{font-size:10px;letter-spacing:2.5px;color:var(--ink3);margin-bottom:10px}
+.hero-title{font-family:var(--serif);font-size:25px;letter-spacing:1.2px;line-height:1.38;
+  color:var(--ink)}
+.hero-meta{font-size:11.5px;color:var(--ink2);margin-top:10px;letter-spacing:.6px}
+.hero-price{margin-top:13px;font-size:22px;font-family:var(--serif);color:var(--red);letter-spacing:.5px}
+
+.quick{display:flex;gap:9px;padding:22px 18px 6px}
+.q{flex:1;min-width:0;cursor:pointer;text-align:center}
+.q-img{width:100%;aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#F0EFEC}
+.q-img img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.22)}
+.q span{display:block;font-size:11px;color:var(--ink2);margin-top:7px;letter-spacing:.5px}
+
+.bar{display:flex;align-items:baseline;padding:24px 18px 12px;gap:9px}
+.bar-t{font-family:var(--serif);font-size:17px;letter-spacing:3px}
+.bar-n{font-size:10.5px;color:var(--ink3);letter-spacing:.5px}
+.bar-sort{margin-left:auto;font-size:11.5px;color:var(--ink2);cursor:pointer;letter-spacing:.5px}
+
+.grid{columns:2;column-gap:10px;padding:0 18px}
+.card{break-inside:avoid;margin-bottom:18px;cursor:pointer}
+.imgwrap{border-radius:10px;overflow:hidden;background:#F0EFEC}
+.imgwrap img{width:100%;display:block;object-fit:cover;transform:scale(1.16)}
+.h1{aspect-ratio:1/1.06}.h2{aspect-ratio:1/1}.h3{aspect-ratio:1/.94}
+.c-t{font-size:12.5px;color:var(--ink);margin-top:8px;letter-spacing:.3px}
+.c-m{font-size:10.5px;color:var(--ink3);margin-top:4px}
+.c-p{font-size:13px;color:var(--red);margin-top:6px;font-family:var(--serif);letter-spacing:.5px}
+.sold .imgwrap{opacity:.45}
+.sold .c-p{color:#B0ABA4}
+.foot-note{text-align:center;font-size:10.5px;color:#B0ABA4;letter-spacing:2px;padding:14px 0 34px}
+
+.cat-tabs{display:flex;gap:8px;padding:14px 18px 4px}
+.ct{flex:1;text-align:center;padding:11px 0;border-radius:9px;font-size:13px;
+  font-family:var(--serif);letter-spacing:2px;background:#F2F1EE;color:var(--ink2);cursor:pointer}
+.ct.on{background:var(--ink);color:#FFFFFF}
+
+.subcat{display:flex;gap:8px;overflow-x:auto;padding:14px 18px 10px;scrollbar-width:none}
+.subcat::-webkit-scrollbar{display:none}
+.sc{flex-shrink:0;padding:6px 14px;border-radius:14px;font-size:12px;color:var(--ink2);
+  border:1px solid var(--line);background:#fff;cursor:pointer;white-space:nowrap}
+.sc.on{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.sc em{font-style:normal;font-size:9.5px;color:var(--ink3);margin-left:4px}
+
+.sortbar{display:flex;gap:16px;padding:4px 18px 12px;overflow-x:auto;scrollbar-width:none;
+  border-bottom:1px solid var(--line)}
+.sortbar::-webkit-scrollbar{display:none}
+.sb{flex-shrink:0;font-size:12px;color:var(--ink2);padding:5px 0;cursor:pointer;position:relative}
+.sb.on{color:var(--ink);font-weight:500}
+.sb.on::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.5px;background:var(--ink)}
+.sizerow{display:flex;gap:8px;padding:12px 18px 6px;overflow-x:auto;scrollbar-width:none}
+.sizerow::-webkit-scrollbar{display:none}
+.sz{flex-shrink:0;font-size:11px;padding:5px 11px;border-radius:5px;background:#F2F1EE;
+  color:var(--ink2);cursor:pointer}
+.sz.on{background:var(--ink);color:#FFFFFF}
+
+.rowlist{padding:6px 18px 0}
+.empty{text-align:center;font-size:12px;color:#A8A29B;line-height:2;padding:70px 0;letter-spacing:.5px}
+.ri{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.rimg{width:92px;height:92px;border-radius:9px;overflow:hidden;flex-shrink:0;background:#F0EFEC}
+.rimg img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.18)}
+.ri-b{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center}
+.ri-t{font-size:13.5px;color:var(--ink);letter-spacing:.3px}
+.ri-m{font-size:11px;color:var(--ink3);margin-top:6px;line-height:1.5}
+.ri-p{font-size:15px;color:var(--red);font-family:var(--serif);margin-top:9px;letter-spacing:.5px}
+.tagline{display:inline-block;font-size:9.5px;color:var(--ink2);border:1px solid rgba(22,21,19,.18);
+  border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+
+.gal-wrap{position:relative}
+.gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  aspect-ratio:1/1;background:#F0EFEC}
+.gallery::-webkit-scrollbar{display:none}
+.gal-slide{width:100%;height:100%;flex-shrink:0;scroll-snap-align:start;overflow:hidden}
+.gal-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.dots{position:absolute;right:16px;bottom:16px;display:flex;gap:5px;z-index:5}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.45)}
+.dot.on{background:#fff}
+.floatbar{position:sticky;top:0;height:0;z-index:26;pointer-events:none}
+.back-float{position:absolute;top:12px;left:12px;pointer-events:auto;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.94);border:0.5px solid rgba(22,21,19,.14);
+  box-shadow:0 2px 10px rgba(0,0,0,.14);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.seal-float{position:absolute;right:14px;top:14px;z-index:9}
+
+.detail-head{padding:20px 18px 18px;border-bottom:1px solid var(--line)}
+.d-no{font-size:10px;color:var(--ink3);letter-spacing:2px}
+.d-title{font-family:var(--serif);font-size:22px;line-height:1.4;letter-spacing:1.5px;margin:10px 0 0}
+.d-sub{font-size:11.5px;color:var(--ink2);margin-top:9px;letter-spacing:.5px}
+.d-price{margin-top:18px;display:flex;align-items:baseline;gap:10px}
+.d-price b{font-size:27px;font-weight:400;color:var(--red);font-family:var(--serif);letter-spacing:.5px}
+.d-price span{font-size:11px;color:var(--ink3)}
+.d-price .only{margin-left:auto;font-size:10px;color:var(--ink2);background:#F6F5F2;
+  border:1px solid rgba(22,21,19,.12);padding:3px 8px;border-radius:4px}
+
+.sec{padding:20px 18px;border-bottom:1px solid var(--line)}
+.sec-h{font-size:11px;color:var(--ink3);letter-spacing:3px;margin-bottom:15px}
+.spec{display:grid;grid-template-columns:1fr 1fr;column-gap:14px;row-gap:13px}
+.spec div{font-size:12.5px;min-width:0}
+.spec label{display:block;color:var(--ink3);font-size:10.5px;margin-bottom:4px;letter-spacing:.5px}
+.spec b{font-weight:400;color:var(--ink)}
+
+.video{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;background:#F0EFEC}
+.video img{width:100%;height:100%;object-fit:cover;opacity:.85;transform:scale(1.12)}
+.play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.play i{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center}
+.play svg{margin-left:3px}
+.vtag{position:absolute;left:12px;bottom:11px;font-size:10.5px;color:#fff;letter-spacing:1px;
+  text-shadow:0 1px 6px rgba(0,0,0,.5)}
+
+.story{font-size:13px;line-height:2.05;color:var(--ink2);letter-spacing:.3px}
+.story p{margin:0 0 13px}
+.sign{margin-top:6px;font-size:11px;color:var(--ink3);letter-spacing:1.5px;text-align:right;
+  font-family:var(--serif)}
+
+.notice{font-size:11.5px;line-height:1.95;color:var(--ink2)}
+.notice p{margin:0 0 9px;padding-left:12px;position:relative}
+.notice p::before{content:"";position:absolute;left:0;top:9px;width:3px;height:3px;
+  border-radius:50%;background:var(--gold)}
+
+.d-bar{position:sticky;bottom:0;display:flex;gap:10px;padding:11px 14px 20px;
+  background:rgba(250,246,238,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:15}
+.btn-ghost{width:96px;height:45px;border-radius:9px;border:1px solid rgba(22,21,19,.18);
+  background:none;color:var(--ink2);font-size:11px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-family:var(--sans)}
+.btn-ghost svg{width:15px;height:15px}
+.btn-main{flex:1;height:45px;border-radius:9px;border:0;cursor:pointer;
+  background:var(--ink);color:#FFFFFF;font-size:14.5px;letter-spacing:3px;font-family:var(--serif)}
+
+.card-box{margin:14px 18px;background:var(--card);border-radius:12px;padding:15px;
+  border:0.5px solid var(--line)}
+.row{display:flex;align-items:center;gap:12px}
+.row+.row{margin-top:14px;padding-top:14px;border-top:1px solid rgba(22,21,19,.06)}
+.row .k{font-size:12px;color:var(--ink3);flex-shrink:0}
+.row .v{flex:1;font-size:13px;text-align:right;color:var(--ink);line-height:1.6}
+.row .v small{display:block;font-size:10.5px;color:var(--ink3);margin-top:3px}
+.thumb-s{width:66px;height:66px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.o-name{font-size:13px;line-height:1.5}
+.o-meta{font-size:11px;color:var(--ink3);margin-top:5px}
+.price-r{margin-left:auto;font-size:14px;color:var(--red);white-space:nowrap;font-family:var(--serif)}
+
+.check{display:flex;gap:10px;padding:14px 16px;margin:0 18px 14px;
+  background:#F8F7F5;border:1px solid rgba(22,21,19,.10);border-radius:12px;cursor:pointer}
+.box{width:17px;height:17px;border:1px solid #BDB8B1;border-radius:4px;flex-shrink:0;
+  margin-top:1px;display:flex;align-items:center;justify-content:center;transition:.15s;background:#fff}
+.box.on{background:var(--ink);border-color:var(--ink)}
+.box.on::after{content:"";width:8px;height:4px;border-left:2px solid #fff;
+  border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.check p{margin:0;font-size:11px;line-height:1.8;color:var(--ink2)}
+.check p b{color:var(--ink);font-weight:500}
+
+.checkout-foot{margin-top:auto;flex-shrink:0}
+#page-checkout.active{display:flex;flex-direction:column}
+.total{margin:0 18px 16px;padding:17px;background:var(--card);border-radius:12px;
+  border:0.5px solid var(--line);display:flex;align-items:baseline}
+.total .k{font-size:12px;color:var(--ink3)}
+.total .v{margin-left:auto;font-size:23px;color:var(--red);font-family:var(--serif);letter-spacing:.5px}
+.pay-bar{padding:0 18px 28px}
+.pay-btn{width:100%;height:48px;border-radius:10px;border:0;cursor:pointer;
+  background:var(--ink);color:#FFFFFF;font-size:15px;letter-spacing:3px;font-family:var(--serif)}
+.pay-btn.off{background:#E8E6E2;color:#A09B94}
+.hint{text-align:center;font-size:10.5px;color:#B0ABA4;margin-top:12px}
+
+.succ{padding:58px 24px 0;text-align:center}
+.ring{width:66px;height:66px;border-radius:50%;border:1px solid var(--ink);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 26px;
+  background:#F6F5F2}
+.succ h2{font-family:var(--serif);font-size:20px;letter-spacing:4px;margin:0 0 13px;font-weight:400}
+.succ p{font-size:12px;color:var(--ink2);line-height:1.95;margin:0}
+.ono{font-size:10.5px;color:var(--ink3);letter-spacing:1px;margin-top:17px}
+
+.qr-box{margin:26px 18px 0;padding:24px 18px;border-radius:14px;background:var(--card);
+  border:0.5px solid var(--line);text-align:center}
+.qr-box h3{font-family:var(--serif);font-size:14.5px;letter-spacing:2px;margin:0 0 9px;font-weight:400;color:var(--ink)}
+.qr-box p{font-size:11px;color:var(--ink2);line-height:1.8;margin:0 0 17px}
+.qr-wrap{display:inline-block;padding:9px;background:#fff;border-radius:8px;
+  border:0.5px solid var(--line)}
+canvas{display:block;border-radius:3px}
+.qr-img{display:block;width:140px;height:140px;object-fit:contain;border-radius:3px}
+.qr-name{font-size:10.5px;color:var(--ink3);margin-top:12px;letter-spacing:1px}
+
+.acts{display:flex;gap:10px;padding:24px 18px 36px}
+.acts button{flex:1;height:44px;border-radius:9px;font-size:12.5px;letter-spacing:1px;
+  cursor:pointer;font-family:var(--sans)}
+.a1{background:none;border:1px solid rgba(22,21,19,.18);color:var(--ink2)}
+.a2{background:#F6F5F2;border:1px solid rgba(22,21,19,.14);color:var(--ink)}
+
+.profile{padding:26px 18px 20px;border-bottom:1px solid var(--line)}
+.pf-top{display:flex;align-items:center;gap:14px}
+.avatar{width:56px;height:56px;border-radius:50%;background:#F2F1EE;
+  border:0.5px solid rgba(22,21,19,.12);display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-size:19px;color:var(--red)}
+.pf-name{font-family:var(--serif);font-size:16px;letter-spacing:2px}
+.pf-sub{font-size:10.5px;color:var(--ink3);margin-top:6px}
+.stats{display:flex;margin-top:22px}
+.stats div{flex:1;text-align:center}
+.stats b{display:block;font-size:17px;font-weight:400;color:var(--ink);font-family:var(--serif)}
+.stats span{font-size:10.5px;color:var(--ink3)}
+
+.item{display:flex;align-items:center;gap:12px;padding:15px 18px;
+  border-bottom:1px solid rgba(22,21,19,.06);cursor:pointer;background:var(--card)}
+.item .ic{width:20px;display:flex;justify-content:center;color:var(--ink2)}
+.item .tx{flex:1;font-size:13px}
+.item .ar{color:#C6C1BA;font-size:16px}
+.group-title{font-size:10.5px;color:var(--ink3);letter-spacing:2.5px;padding:20px 18px 9px}
+
+.order-status{padding:26px 18px 22px;border-bottom:1px solid var(--line)}
+.order-status h2{font-family:var(--serif);font-size:19px;letter-spacing:3px;margin:0 0 11px;font-weight:400}
+.order-status p{font-size:11.5px;color:var(--ink2);margin:0;line-height:1.85}
+.timeline{padding:20px 18px;border-bottom:1px solid var(--line)}
+.tl{position:relative;padding-left:20px}
+.tl::before{content:"";position:absolute;left:3px;top:6px;bottom:6px;width:1px;background:rgba(22,21,19,.12)}
+.tl-i{position:relative;padding-bottom:21px}
+.tl-i:last-child{padding-bottom:0}
+.tl-i::before{content:"";position:absolute;left:-20px;top:5px;width:7px;height:7px;
+  border-radius:50%;background:#fff;border:1px solid #C6C1BA}
+.tl-i.on::before{background:var(--ink);border-color:var(--ink)}
+.tl-t{font-size:12.5px}
+.tl-d{font-size:10.5px;color:var(--ink3);margin-top:5px;line-height:1.6}
+
+.form{padding:18px}
+.field{margin-bottom:15px}
+.field label{display:block;font-size:11px;color:var(--ink3);letter-spacing:1px;margin-bottom:8px}
+.field input,.field textarea{width:100%;background:var(--card);border:1px solid var(--line);
+  border-radius:9px;padding:11px 12px;color:var(--ink);font-size:13px;font-family:var(--sans);outline:none}
+.field textarea{resize:none;height:82px;line-height:1.7}
+.field input::placeholder,.field textarea::placeholder{color:#BDB8B1}
+.upload{margin:0 18px 15px;border:1px dashed rgba(22,21,19,.18);border-radius:12px;
+  padding:28px;text-align:center;background:#FAFAF8;cursor:pointer}
+.upload .plus{font-size:24px;color:var(--ink3);line-height:1}
+.upload p{font-size:11px;color:var(--ink3);margin:10px 0 0;line-height:1.7}
+.two{display:flex;gap:10px}
+.two>*{flex:1}
+
+.tabbar{height:64px;flex-shrink:0;display:flex;align-items:flex-start;padding-top:10px;
+  background:rgba(255,255,255,.98);backdrop-filter:blur(16px);border-top:0.5px solid var(--line)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;
+  font-size:10px;color:#B0ABA4;letter-spacing:1px}
+.tab.on{color:var(--ink)}
+.tab svg{width:19px;height:19px}
+
+.toast{position:absolute;left:50%;bottom:110px;transform:translate(-50%,10px);
+  background:rgba(22,21,19,.93);color:#FFFFFF;font-size:12px;padding:11px 18px;
+  border-radius:8px;opacity:0;pointer-events:none;transition:.25s;z-index:99;
+  max-width:300px;line-height:1.7;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.cap{font-size:11.5px;color:#8A8680;letter-spacing:1px;text-align:center;line-height:1.9}
+.jump{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;max-width:420px}
+.jump span{font-size:11px;color:#5F5A54;border:1px solid rgba(22,21,19,.16);
+  padding:5px 11px;border-radius:13px;cursor:pointer;background:rgba(255,255,255,.5)}
+.jump span:hover{border-color:var(--red);color:var(--red)}
+@media (max-height:900px){
+  body{padding-top:18px}
+  .phone{transform:scale(.86);transform-origin:top center;margin-bottom:-114px}
+}
+</style>
+<style>
+/* ===== 主题变量层：以下全部由后台配置注入，不要在页面里写死 ===== */
+.hero{height:var(--hero-h,380px)}
+.grid{columns:var(--cols,2)}
+.imgwrap,.q-img,.rimg,.thumb-s{border-radius:var(--r,10px)}
+.card-box,.check,.total,.qr-box,.video,.upload,.ct{border-radius:calc(var(--r,10px) + 2px)}
+.pay-btn,.btn-main,.btn-ghost,.field input,.field textarea,.a1,.a2{border-radius:var(--r,10px)}
+.nav{background:var(--paper-fade,rgba(255,255,255,.93))}
+.d-bar{background:var(--paper-fade,rgba(255,255,255,.96))}
+.tabbar{background:var(--paper-fade,rgba(255,255,255,.98))}
+.notice p::before{background:var(--ink3)}
+html[data-density="compact"] .sec{padding-top:13px;padding-bottom:13px}
+html[data-density="compact"] .quick{padding-top:15px}
+html[data-density="compact"] .card{margin-bottom:12px}
+html[data-density="roomy"] .sec{padding-top:28px;padding-bottom:28px}
+html[data-density="roomy"] .card{margin-bottom:24px}
+html[data-price="off"] .c-p,html[data-price="off"] .ri-p,html[data-price="off"] .hero-price{display:none}
+html[data-video="off"] .sec-video{display:none}
+html[data-kf="off"] .btn-ghost{display:none}
+.notice-bar{display:flex;align-items:flex-start;gap:8px;margin:14px 18px 0;padding:9px 12px;
+  background:var(--surf,#F6F5F2);border-radius:8px;font-size:11px;color:var(--ink2);line-height:1.65}
+.notice-bar i{width:3px;height:3px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:7px}
+.notice-bar span{flex:1}
+/* 后台预览用：只留手机本体 */
+html[data-embed="on"]{overflow:hidden;background:var(--paper,#fff)}
+html[data-embed="on"] body{padding:0;margin:0;width:375px;height:812px;overflow:hidden;
+  background:var(--paper,#fff);display:block;min-height:0}
+/* 真手机打开：去掉手机壳，整屏铺开（后台预览的 embed 模式不受影响） */
+@media (max-width:520px){
+  html:not([data-embed="on"]) body{padding:0;background:var(--paper);display:block}
+  html:not([data-embed="on"]) .stage{display:block;gap:0;min-height:0}
+  html:not([data-embed="on"]) .phone{width:100%;height:100vh;height:100dvh;border:0;border-radius:0;
+    box-shadow:none;transform:none;margin:0;padding-top:env(safe-area-inset-top)}
+  html:not([data-embed="on"]) .cap,
+  html:not([data-embed="on"]) .jump,
+  html:not([data-embed="on"]) .statusbar{display:none}
+}
+
+html[data-embed="on"] .stage{display:block;width:375px;gap:0}
+html[data-embed="on"] .cap,html[data-embed="on"] .jump{display:none}
+html[data-embed="on"] .phone{width:375px;height:812px;margin:0;border:0;border-radius:0;
+  box-shadow:none;transform:none}
+</style>
+<!-- 线上正式配置：由后台「导出配置」生成后放在这里，改了它网站就变 -->
+<script src="./cfg.js"></script>
+<script>
+/* =========================================================================
+   配置表：这是整个界面的唯一数据源。
+   真实小程序里它存在云数据库的 settings 表，后台改一行，前端立刻变。
+   原型里用「?cfg=...」或 localStorage 传进来，方便演示。
+   ========================================================================= */
+var DEFAULT_CFG = {
+  brand:{
+    name:'核樂不煩•STUDIO', sub:'只 做 核 桃 与 籽', city:'文玩核桃 · 杭州文三路',
+    sign:'— 核樂不煩 • STUDIO', good:'出品 · 工具自己做，核桃自己挑',
+    story:['何乐不为，核乐不烦。盘核桃这事，天天刷、天天盘，旁人看着烦，玩的人从不烦——名字就是这么来的。',
+           '专做文玩核桃十二年。狮子头、虎头、官帽，一年也就挑得出几十对能看的。每对都过我的手，边宽卡过尺，配对看过纹。',
+           '店在杭州文三路，随时欢迎来上手。看不懂的、拿不准的，加微信问我，不买也答。'],
+    douyin:'@核乐不烦', addr:'杭州市西湖区文三路 90 号', hours:'周二至周日 10:00–20:00', kefu:'每日 9:00–22:00'
+  },
+  theme:{paper:'#FFFFFF',surf:'#F6F5F2',ink:'#161513',ink2:'#6B6660',ink3:'#A8A29B',
+         red:'#9E3327',line:8,radius:10,font:'serif'},
+  layout:{cols:2,heroH:380,density:'normal',notice:true,quick:true,bar:true,price:true,video:true,kf:true},
+  notice:'本周上新 3 对狮子头 · 抖音直播间今晚 8 点开青皮',
+  hero:{id:'n1',kicker:'本 期 主 推 · 第 018 号',
+        title:'白狮子 45mm<br>矮桩满肉 · 精配一对', meta:'已盘半年 · 红润见底 · 误差 0.2mm'},
+  quick:[{label:'狮子头',cat:'walnut',sub:'狮子头',img:'n5'},{label:'虎头',cat:'walnut',sub:'虎头',img:'n2'},
+         {label:'官帽',cat:'walnut',sub:'官帽',img:'n3'},{label:'手串',cat:'bodhi',sub:'全部',img:'b3'}],
+  policy:['核桃为天然果核，纹路、边宽、脐形存在个体差异，不属于质量问题。',
+          '未上手 7 天内可退，上手盘玩后影响二次销售，不支持退换。',
+          '发货前拍摄存档照并附编号卡，与实物一致。',
+          '顺丰包邮，48 小时内发出。'],
+  ship:['48 小时内顺丰发出，保价已含。','发货前拍摄存档照并附编号卡，与实物一致。','收到请当天开箱验货，有问题当天联系。'],
+  /* ===== 逐页内容：后台「页面管理」改的就是这里 ===== */
+  pages:{
+    home:{
+      heroImg:'', barTitle:'在 售', barSort:'按尺寸排 ›', endNote:'— 已 到 底 —'
+    },
+    category:{
+      title:'分类', empty:'这一档暂时没有货|换个尺寸或品种看看', footTpl:'— 共 {n} 件 · {cat} —'
+    },
+    detail:{
+      secSpec:'参 数', secStory:'来 历', secPolicy:'收 货 须 知',
+      videoTag:'上手转一圈 · 26 秒', shipTag:'顺丰包邮', btnKf:'问 问', btnBuy:'请 回 家'
+    },
+    checkout:{
+      title:'确认订单', shipTitle:'发 货 说 明', noteHint:'选填，如送礼需贺卡',
+      payBtn:'微 信 支 付', payHint:'支付服务由微信支付提供 · 资金直达商户',
+      termsWalnut:'我已看过<b>实拍图与上手视频</b>，知悉核桃的纹路、边宽差异<b>不属于质量问题</b>，并已阅读<b>退换规则</b>。',
+      termsBodhi:'我已看过<b>实拍图与上手视频</b>，知悉籽料的色差、纹路差异<b>不属于质量问题</b>，并已阅读<b>退换规则</b>。'
+    },
+    success:{
+      title:'这 对 是 您 的 了',
+      desc:'{item} 已下架，不会再卖给别人。<br>48 小时内顺丰发出，单号推送到微信。',
+      qrTitle:'加 个 微 信 吧', qrDesc:'盘玩、配对、下次到货<br>都在朋友圈先说',
+      qrName:'长按识别 · 企业微信', qrImg:''
+    },
+    orders:{
+      title:'我的', g1:'我 的 订 单', g2:'更 多',
+      foot:'— 头像昵称由用户自行填写，openid 静默识别 —',
+      aboutLabel:'联系我 · 关于核樂不煩'
+    },
+    order:{
+      title:'订单详情', statusTitle:'待 发 货',
+      statusDesc:'48 小时内顺丰发出，保价已含。<br>盘玩中有任何问题，随时找我。',
+      btn1:'联系店家', btn2:'继续看'
+    },
+    about:{
+      shopImg:'', shopCap:'店在文三路，随时来上手',
+      qrTitle:'加 个 企 业 微 信', qrDesc:'每日上新第一时间发圈<br>配对、盘玩问题随时问',
+      qrName:'长按识别 · 企业微信', qrImg:'', btn:'一 键 联 系',
+      declareTitle:'声 明',
+      declare:['本店所售为天然果核与籽料，纹路、色差、边宽存在个体差异，不属于质量问题。',
+               '所有作品实拍。不含象牙、犀角、玳瑁、珊瑚等濒危物种制品；不做「开光、辟邪、招财」等功效表述。',
+               '页面价格以当页为准，不承诺升值与投资回报。']
+    },
+    publish:{
+      title:'上新', upTip:'上传实拍图（最多 9 张）<br>建议：正面 / 侧面 / 底部脐 / 上手',
+      check:'已确认图片实拍、参数真实，文案不含功效与升值承诺', btn:'上 架'
+    }
+  },
+  cats:{walnut:{label:'文玩核桃',subs:['全部','狮子头','虎头','官帽','公子帽']},
+        bodhi:{label:'菩提手串',subs:['全部','小金刚','猴头','凤眼']}}
+};
+var FONT_MAP = {
+  serif:'"Songti SC","STZhongsong","SimSun","Noto Serif SC",serif',
+  sans:'-apple-system,"PingFang SC","Microsoft YaHei",sans-serif',
+  kai:'"Kaiti SC","STKaiti","KaiTi",serif'
+};
+function deepMerge(a,b){
+  var o={},k;
+  for(k in a) o[k]=a[k];
+  if(!b) return o;
+  for(k in b){
+    o[k] = (b[k] && typeof b[k]==='object' && !Array.isArray(b[k])) ? deepMerge(a[k]||{}, b[k]) : b[k];
+  }
+  return o;
+}
+/* 线上配置：cfg.js 里的 window.SITE_CFG。没有这个文件时全部回落到默认值 */
+var REMOTE = (window.SITE_CFG && typeof window.SITE_CFG==='object') ? window.SITE_CFG : {};
+var CFG = (function(){
+  var c=null;
+  try{
+    var m = new URLSearchParams(location.search).get('cfg');
+    if(m){ c = JSON.parse(decodeURIComponent(m)); }            /* 后台实时预览 */
+    else if(/[?&]draft=1/.test(location.search)){              /* 自己看本地草稿 */
+      var d = localStorage.getItem('gh_cfg'); if(d) c = JSON.parse(d);
+    }
+    else if(REMOTE.cfg){ c = REMOTE.cfg; }                     /* 已发布的正式配置 */
+    else{ var s = localStorage.getItem('gh_cfg'); if(s) c = JSON.parse(s); }
+  }catch(e){ c=null; }
+  return deepMerge(DEFAULT_CFG, c);
+})();
+function _rgb(h){
+  h = String(h).replace('#','');
+  if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function _rgba(h,a){ var c=_rgb(h); return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'; }
+
+/* 主题：只做一件事——把配置写进 CSS 变量 */
+(function applyTheme(){
+  var t=CFG.theme, L=CFG.layout, s=document.documentElement.style, d=document.documentElement;
+  s.setProperty('--paper',t.paper);
+  s.setProperty('--surf',t.surf);
+  s.setProperty('--card',t.paper);
+  s.setProperty('--ink',t.ink);
+  s.setProperty('--ink2',t.ink2);
+  s.setProperty('--ink3',t.ink3);
+  s.setProperty('--red',t.red);
+  s.setProperty('--red2',t.red);
+  s.setProperty('--line',_rgba(t.ink,(t.line/100).toFixed(3)));
+  s.setProperty('--paper-fade',_rgba(t.paper,.96));
+  s.setProperty('--r',t.radius+'px');
+  s.setProperty('--cols',L.cols);
+  s.setProperty('--hero-h',L.heroH+'px');
+  s.setProperty('--serif',FONT_MAP[t.font]||FONT_MAP.serif);
+  d.setAttribute('data-density',L.density);
+  d.setAttribute('data-price',L.price?'on':'off');
+  d.setAttribute('data-video',L.video?'on':'off');
+  d.setAttribute('data-kf',L.kf?'on':'off');
+  if(new URLSearchParams(location.search).get('embed')) d.setAttribute('data-embed','on');
+})();
+</script>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+    <div class="statusbar">
+      <b id="clock">9:41</b>
+      <div class="sig">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="none"><rect x="0" y="7" width="3" height="4" rx="1" fill="currentColor"/><rect x="4.5" y="5" width="3" height="6" rx="1" fill="currentColor"/><rect x="9" y="2.5" width="3" height="8.5" rx="1" fill="currentColor"/><rect x="13.5" y="0" width="3" height="11" rx="1" fill="currentColor"/></svg>
+        <svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M8 9.6a1.2 1.2 0 100-2.4 1.2 1.2 0 000 2.4z" fill="currentColor"/><path d="M4 6.6a5.6 5.6 0 018 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/><path d="M1.4 3.9a9.4 9.4 0 0113.2 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+        <svg width="23" height="11" viewBox="0 0 23 11" fill="none"><rect x="0.5" y="0.5" width="19" height="10" rx="2.5" stroke="currentColor" stroke-opacity=".45" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1.5" fill="currentColor"/><path d="M21 4v3a2 2 0 000-3z" fill="currentColor" fill-opacity=".45"/></svg>
+      </div>
+    </div>
+
+    <div class="screen">
+
+      <section class="page active" id="page-home">
+        <div class="hero" id="heroBlock" onclick="openHero()">
+          <img id="heroImg" src="./assets/n1.jpg" alt="">
+          <div class="hero-fade"></div>
+          <div class="hero-top">
+            <div class="shop"><span id="brandName">核樂不煩•STUDIO</span><small id="brandSub">只 做 核 桃 与 籽</small></div>
+          </div>
+        </div>
+
+        <div class="notice-bar" id="noticeBar"><i></i><span id="noticeTxt"></span></div>
+
+        <div class="hero-info" id="heroInfo" onclick="openHero()">
+          <div class="kicker" id="heroKicker">本 期 主 推 · 第 018 号</div>
+          <div class="hero-title" id="heroTitle">白狮子 45mm<br>矮桩满肉 · 精配一对</div>
+          <div class="hero-meta" id="heroMeta">已盘半年 · 红润见底 · 误差 0.2mm</div>
+          <div class="hero-price" id="heroPrice">¥ 4,800</div>
+        </div>
+
+        <div class="quick" id="quick"></div>
+
+        <div class="bar" id="barBlock">
+          <span class="bar-t" id="barTitle">在 售</span>
+          <span class="bar-n" id="barCount">15 件</span>
+          <span class="bar-sort" id="barSort" onclick="go('category')">按尺寸排 ›</span>
+        </div>
+
+        <div class="grid" id="homeGrid"></div>
+        <div class="foot-note" id="homeEnd">— 已 到 底 —</div>
+      </section>
+
+      <section class="page" id="page-category">
+        <div class="nav"><div class="spacer"></div><div class="title" id="catTitle">分类</div><div class="spacer"></div></div>
+
+        <div class="cat-tabs" id="catTabs"></div>
+        <div class="subcat" id="subcat"></div>
+        <div class="sortbar" id="sortbar"></div>
+        <div class="sizerow" id="sizerow"></div>
+        <div class="rowlist" id="rowlist"></div>
+        <div class="foot-note" id="catFoot"></div>
+      </section>
+
+      <section class="page" id="page-detail">
+        <div class="floatbar">
+          <div class="back-float" onclick="go('home')">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="gal-wrap">
+          <div class="gallery" id="dgallery" onscroll="dotSync(this)"></div>
+          <div class="dots" id="ddots"><i class="dot on"></i><i class="dot"></i><i class="dot"></i></div>
+        </div>
+
+        <div class="detail-head">
+          <div class="d-no" id="dno">编 号 · 018</div>
+          <h1 class="d-title" id="dtitle">狮子头 · 白狮子 45mm</h1>
+          <div class="d-sub" id="dsub">矮桩满肉 · 精配一对 · 已盘半年</div>
+          <div class="d-price"><b id="dprice">¥4,800</b><span id="dShipTag">顺丰包邮</span><span class="only" id="donly">仅此一对</span></div>
+        </div>
+
+        <div class="sec sec-video">
+          <div class="video">
+            <img id="dvideo" src="./assets/n1.jpg" alt="">
+            <div class="play"><i><svg width="13" height="14" viewBox="0 0 13 14" fill="none"><path d="M2 1.6v10.8c0 .5.55.8.98.55l8.4-5.4a.65.65 0 000-1.1l-8.4-5.4A.65.65 0 002 1.6z" fill="#9E3327"/></svg></i></div>
+            <div class="vtag" id="dVideoTag">上手转一圈 · 26 秒</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-h" id="dSpecH">参 数</div>
+          <div class="spec" id="dspec"></div>
+        </div>
+
+        <div class="sec">
+          <div class="sec-h" id="dStoryH">来 历</div>
+          <div class="story" id="dstory"></div>
+          <div class="sign" id="dsign">— 核樂不煩</div>
+        </div>
+
+        <div class="sec" style="border:0">
+          <div class="sec-h" id="dPolicyH">收 货 须 知</div>
+          <div class="notice" id="dpolicy"></div>
+        </div>
+
+        <div class="d-bar">
+          <button class="btn-ghost" id="dKfBtn" onclick="toast('将打开微信客服会话，消息直达企业微信')">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none"><path d="M10 18c4.4 0 8-2.9 8-6.5S14.4 5 10 5s-8 2.9-8 6.5c0 1.9.95 3.6 2.45 4.8L4 18l2.6-1.2c1.05.3 2.2.5 3.4.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span id="dKfTxt">问 问</span>
+          </button>
+          <button class="btn-main" id="dBuyBtn" onclick="go('checkout')">请 回 家</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-checkout">
+        <div class="nav">
+          <button class="back" onclick="go('detail')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="title" id="ckTitle">确认订单</div><div class="spacer"></div>
+        </div>
+
+        <div class="card-box">
+          <div class="row">
+            <div style="flex:1">
+              <div style="font-size:13px">陈先生 138****6621</div>
+              <div style="font-size:11px;color:#A8A29B;margin-top:6px;line-height:1.7">浙江省杭州市西湖区<br>文三路 90 号 3 幢 1201 室</div>
+            </div>
+            <span style="color:#C6C1BA">›</span>
+          </div>
+        </div>
+
+        <div class="card-box">
+          <div class="row">
+            <img class="thumb-s" id="cthumb" src="./assets/n1.jpg" alt="">
+            <div style="flex:1;min-width:0">
+              <div class="o-name" id="cname">狮子头 · 白狮子 45mm</div>
+              <div class="o-meta" id="cmeta">编号 018 · 精配一对</div>
+              <div class="price-r" id="cprice" style="margin:9px 0 0">¥4,800</div>
+            </div>
+          </div>
+          <div class="row"><span class="k">运费</span><span class="v">顺丰包邮 ¥0</span></div>
+          <div class="row"><span class="k">备注</span><span class="v" style="color:#BDB8B1" id="ckNote">选填，如送礼需贺卡</span></div>
+        </div>
+
+        <div class="check" onclick="toggleCheck()">
+          <div class="box" id="cbox"></div>
+          <p id="cterms">我已看过<b>实拍图与上手视频</b>，知悉核桃的纹路、边宽差异<b>不属于质量问题</b>，并已阅读<b>退换规则</b>。</p>
+        </div>
+
+        <div class="sec" style="border:0;padding-top:2px;padding-bottom:0">
+          <div class="sec-h" id="ckShipH">发 货 说 明</div>
+          <div class="notice" id="cship"></div>
+        </div>
+
+        <div class="checkout-foot">
+          <div class="total"><span class="k">应付</span><span class="v" id="ctotal">¥4,800</span></div>
+          <div class="pay-bar">
+            <button class="pay-btn off" id="payBtn" onclick="pay()">微 信 支 付</button>
+            <div class="hint" id="ckHint">支付服务由微信支付提供 · 资金直达商户</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-success">
+        <div class="succ">
+          <div class="ring">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M6 13.5L11 18.5L20.5 8.5" stroke="#161513" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 id="succTitle">这 对 是 您 的 了</h2>
+          <p id="succDesc">白狮子已下架，不会再卖给别人。<br>48 小时内顺丰发出，单号推送到微信。</p>
+          <div class="ono">订单号 2026111319024771</div>
+        </div>
+
+        <div class="qr-box">
+          <h3 id="sqTitle">加 个 微 信 吧</h3>
+          <p id="sqDesc">盘玩、配对、下次到货<br>都在朋友圈先说</p>
+          <div class="qr-wrap"><canvas id="qr1" width="140" height="140"></canvas><img class="qr-img" id="sqrImg" alt="" style="display:none"></div>
+          <div class="qr-name" id="sqName">长按识别 · 企业微信</div>
+        </div>
+
+        <div class="acts">
+          <button class="a1" onclick="toast('将打开微信客服会话')">在线客服</button>
+          <button class="a2" onclick="go('order')">查看订单</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-orders">
+        <div class="nav"><div class="spacer"></div><div class="title" id="myTitle">我的</div><div class="spacer"></div></div>
+        <div class="profile">
+          <div class="pf-top">
+            <div class="avatar">陈</div>
+            <div>
+              <div class="pf-name">微信用户</div>
+              <div class="pf-sub">2026 年 3 月首次到访 · 来过 8 次</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div><b>2</b><span>订单</span></div>
+            <div><b>5</b><span>收藏</span></div>
+            <div><b>17</b><span>浏览</span></div>
+          </div>
+        </div>
+
+        <div class="group-title" id="myG1">我 的 订 单</div>
+        <div class="list">
+          <div class="item" onclick="go('order')">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><rect x="2.5" y="5" width="13" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M6 5V3.6A1.6 1.6 0 017.6 2h2.8A1.6 1.6 0 0112 3.6V5" stroke="currentColor" stroke-width="1.1"/></svg></div>
+            <div class="tx">待发货 <span style="color:#A8A29B;font-size:11px">· 白狮子 45mm</span></div>
+            <div class="ar">›</div>
+          </div>
+          <div class="item" onclick="go('order')">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><rect x="2.5" y="5" width="13" height="10.5" rx="1.5" stroke="currentColor" stroke-width="1.1"/><path d="M6 5V3.6A1.6 1.6 0 017.6 2h2.8A1.6 1.6 0 0112 3.6V5" stroke="currentColor" stroke-width="1.1"/></svg></div>
+            <div class="tx">已完成 <span style="color:#A8A29B;font-size:11px">· 虎头 麦穗纹</span></div>
+            <div class="ar">›</div>
+          </div>
+        </div>
+
+        <div class="group-title" id="myG2">更 多</div>
+        <div class="list">
+          <div class="item" onclick="toast('收藏夹：5 对')">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 15s-6-3.6-6-7.4A3.6 3.6 0 019 5.2 3.6 3.6 0 0115 7.6C15 11.4 9 15 9 15z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg></div>
+            <div class="tx">我的收藏</div><div class="ar">›</div>
+          </div>
+          <div class="item" onclick="go('about')">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.8" stroke="currentColor" stroke-width="1.1"/><path d="M9 8v4.4M9 5.6v.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="tx" id="myAboutLabel">联系我 · 关于核樂不煩</div><div class="ar">›</div>
+          </div>
+          <div class="item" onclick="window.open('./admin.html','_blank')">
+            <div class="ic"><svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M3 9h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+            <div class="tx">商家后台 · 电脑端 <span style="color:#A8A29B;font-size:11px">· 需账号登录</span></div><div class="ar">›</div>
+          </div>
+        </div>
+        <div class="foot-note" id="myFoot">— 头像昵称由用户自行填写，openid 静默识别 —</div>
+      </section>
+
+      <section class="page" id="page-order">
+        <div class="nav">
+          <button class="back" onclick="go('orders')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="title" id="odTitle">订单详情</div><div class="spacer"></div>
+        </div>
+        <div class="order-status">
+          <h2 id="odStatusT">待 发 货</h2>
+          <p id="odStatusD">48 小时内顺丰发出，保价已含。<br>盘玩中有任何问题，随时找我。</p>
+        </div>
+        <div class="timeline">
+          <div class="tl">
+            <div class="tl-i on"><div class="tl-t">已付款</div><div class="tl-d">2026-11-13 19:02</div></div>
+            <div class="tl-i"><div class="tl-t">已发货</div><div class="tl-d">等待中 · 发后推送运单号</div></div>
+            <div class="tl-i"><div class="tl-t">已签收</div><div class="tl-d">—</div></div>
+          </div>
+        </div>
+        <div class="card-box">
+          <div class="row">
+            <img class="thumb-s" src="./assets/n1.jpg" alt="">
+            <div style="flex:1">
+              <div class="o-name">狮子头 · 白狮子 45mm</div>
+              <div class="o-meta">编号 018</div>
+            </div>
+            <div class="price-r">¥4,800</div>
+          </div>
+          <div class="row"><span class="k">订单号</span><span class="v" style="font-size:11.5px;color:#A8A29B">2026111319024771</span></div>
+          <div class="row"><span class="k">收货人</span><span class="v">陈先生 · 138****6621</span></div>
+        </div>
+        <div class="acts">
+          <button class="a1" id="odBtn1" onclick="toast('将打开微信客服会话')">联系店家</button>
+          <button class="a2" id="odBtn2" onclick="go('home')">继续看</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-about">
+        <div class="nav">
+          <button class="back" onclick="go('orders')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="title" id="abTitle">关于</div><div class="spacer"></div>
+        </div>
+        <div class="sec" style="padding-top:26px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div>
+              <div id="aboutName" style="font-family:var(--serif);font-size:19px;letter-spacing:1px;font-weight:500">核樂不煩•STUDIO</div>
+              <div id="aboutCity" style="font-size:9.5px;color:var(--ink3);letter-spacing:1.6px;margin-top:7px">文玩核桃 · 杭州文三路</div>
+            </div>
+          </div>
+          <div class="story" id="aboutStory" style="margin-top:22px"></div>
+          <div style="margin-top:20px;padding-top:16px;margin-bottom:16px;border-top:1px solid var(--line);display:flex;align-items:baseline;gap:9px;flex-wrap:wrap">
+            <span style="font-size:9.5px;letter-spacing:2px;color:var(--ink3);font-weight:500">GOODHAO</span>
+            <span id="aboutGood" style="font-size:11px;color:var(--ink3)">出品 · 工具自己做，核桃自己挑</span>
+          </div>
+          <div class="sign" id="aboutSign">— 核樂不煩 • STUDIO</div>
+        </div>
+
+        <div class="sec" id="abShopWrap" style="display:none;border:0;padding-top:0;padding-bottom:0">
+          <img id="abShop" alt="" style="width:100%;border-radius:10px;display:block">
+          <div id="abShopCap" style="font-size:10px;color:var(--ink3);margin-top:9px;letter-spacing:.6px"></div>
+        </div>
+
+        <div class="qr-box" style="margin-top:8px">
+          <h3 id="abQrTitle">加 个 企 业 微 信</h3>
+          <p id="abQrDesc">每日上新第一时间发圈<br>配对、盘玩问题随时问</p>
+          <div class="qr-wrap"><canvas id="qr2" width="150" height="150"></canvas><img class="qr-img" id="abQrImg" alt="" style="display:none;width:150px;height:150px"></div>
+          <div class="qr-name" id="abQrName">长按识别 · 企业微信</div>
+        </div>
+
+        <div class="card-box">
+          <div class="row"><span class="k">实体店</span><span class="v" id="aboutAddr" style="font-size:12px"></span></div>
+          <div class="row"><span class="k">抖音</span><span class="v" id="aboutDouyin" style="font-size:12px"></span></div>
+          <div class="row"><span class="k">客服</span><span class="v" id="aboutKefu" style="font-size:12px"></span></div>
+        </div>
+
+        <div class="sec" id="abDeclareWrap" style="border:0">
+          <div class="sec-h" id="abDeclareH">声 明</div>
+          <div class="notice" id="abDeclare"></div>
+        </div>
+
+        <div class="acts" style="padding-bottom:40px">
+          <button class="a2" style="flex:1" id="abBtn" onclick="toast('将打开微信客服会话，消息直达企业微信')">一 键 联 系</button>
+        </div>
+      </section>
+
+      <section class="page" id="page-publish">
+        <div class="nav">
+          <button class="back" onclick="go('orders')"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5.5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <div class="title" id="pubTitle">上新</div><div class="spacer"></div>
+        </div>
+        <div class="upload" onclick="toast('从相册选图，最多 9 张；视频单独上传')">
+          <div class="plus">＋</div>
+          <p id="pubUpTip">上传实拍图（最多 9 张）<br>建议：正面 / 侧面 / 底部脐 / 上手</p>
+        </div>
+        <div class="form">
+          <div class="field"><label>品种</label><input placeholder="如：狮子头 · 白狮子"></div>
+          <div class="two">
+            <div class="field"><label>边宽（mm）</label><input placeholder="45.2 / 45.0"></div>
+            <div class="field"><label>价格</label><input placeholder="¥ 0.00"></div>
+          </div>
+          <div class="two">
+            <div class="field"><label>桩型</label><input placeholder="矮桩 / 高桩 · 满肉"></div>
+            <div class="field"><label>配对</label><input placeholder="精配一对 / 单只"></div>
+          </div>
+          <div class="two">
+            <div class="field"><label>皮质</label><input placeholder="白茬 / 已盘半年"></div>
+            <div class="field"><label>克重</label><input placeholder="32.6 g"></div>
+          </div>
+          <div class="field"><label>来历</label><textarea placeholder="哪批青皮、挑的时候看什么、盘了多久——这段话比图片更能卖货"></textarea></div>
+          <div class="check" style="margin:0 0 16px">
+            <div class="box on"></div>
+            <p style="font-size:10.5px" id="pubCheck">已确认图片实拍、参数真实，文案不含功效与升值承诺</p>
+          </div>
+          <button class="pay-btn" id="pubBtn" onclick="toast('已上架，作品进入审核队列')">上 架</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="tabbar">
+      <div class="tab on" data-tab="home" onclick="go('home')">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 8.5L10 3l7 5.5V16a1 1 0 01-1 1h-3.5v-4.5h-5V17H4a1 1 0 01-1-1V8.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        <span>展厅</span>
+      </div>
+      <div class="tab" data-tab="category" onclick="go('category')">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="3" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.3"/><rect x="3" y="11" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.3"/><rect x="11" y="11" width="6" height="6" rx="1.2" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span>分类</span>
+      </div>
+      <div class="tab" data-tab="orders" onclick="go('orders')">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.2" stroke="currentColor" stroke-width="1.3"/><path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        <span>我的</span>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <div class="cap">点击页面元素走完整流程 · 共 9 屏</div>
+  <div class="jump">
+    <span onclick="go('home')">首页</span>
+    <span onclick="go('category')">分类</span>
+    <span onclick="go('detail')">作品详情</span>
+    <span onclick="go('checkout')">确认订单</span>
+    <span onclick="go('success')">支付成功</span>
+    <span onclick="go('orders')">我的</span>
+    <span onclick="go('order')">订单详情</span>
+    <span onclick="go('about')">关于 · 企微</span>
+    <span onclick="go('publish')">上新</span>
+  </div>
+</div>
+
+<script>
+var TABS = ['home','category','orders'];
+var DARK_TOP = ['home'];
+
+/* ================= 商品数据 ================= */
+var ITEMS = [
+  /* ---------- 文玩核桃 ---------- */
+  {cat:'walnut',id:'n1',no:'018',img:'n1',t:'狮子头 · 白狮子',tag:'已盘',sub:'狮子头',size:45,pan:1,nw:1,
+   m:'45mm · 矮桩 · 红润见底',p:4800,pin:'狮子头 · 白狮子',bw:'45.2 / 45.0',zhuang:'矮桩 满肉',pd:'精配一对',pz:'红润 · 已盘半年',kz:'32.6',
+   story:['这对是去年秋天从涞水收的青皮，剥出来的时候就看出底子好——纹路深，肉厚，两只边的误差不到 0.2 毫米。','我自己盘了半年，没上过油，全靠手汗。现在红得均匀，底子已经开始透。','这种品相的矮桩白狮子，一年碰不上几对。看上了别犹豫，好核桃不等人。']},
+
+  {cat:'walnut',id:'n5',no:'023',img:'n5',t:'狮子头 · 满天星',tag:'精配',sub:'狮子头',size:43,pan:0,nw:2,
+   m:'43mm · 矮桩满肉 · 白茬',p:2600,pin:'狮子头 · 满天星',bw:'43.1 / 43.0',zhuang:'矮桩 满肉',pd:'精配一对',pz:'白茬 · 未上手',kz:'29.8',
+   story:['满天星看的就是那个星点，密而不乱。这一对剥青皮时就挑出来了，两只的星点密度几乎一样。','白茬，一只没上过手。红起来是什么样子，全看您怎么盘——好底子盘出来才干净。','配对是最费工的活。这一对我配了两个月，从三十多对里挑出来。']},
+
+  {cat:'walnut',id:'n2',no:'031',img:'n2',t:'虎头 · 麦穗纹',tag:'已盘',sub:'虎头',size:41,pan:1,nw:3,
+   m:'41mm · 高桩 · 已盘两年',p:1280,pin:'虎头 · 麦穗纹',bw:'41.0 / 40.9',zhuang:'高桩',pd:'一对',pz:'深红 · 已盘两年',kz:'27.4',
+   story:['虎头里麦穗纹最耐看，一条一条排得整齐，盘久了棱线会亮起来。','这对盘了两年，颜色已经压深了，不是那种浮在表面的红。','41 的边宽，戴着不硌手，适合天天上手。']},
+
+  {cat:'walnut',id:'n3',no:'035',img:'n3',t:'官帽 · 白茬',tag:'',sub:'官帽',size:44,pan:0,nw:4,
+   m:'44mm · 高桩秀气 · 一对',p:1680,pin:'官帽',bw:'44.2 / 44.0',zhuang:'高桩 秀气',pd:'一对',pz:'白茬 · 未上手',kz:'30.2',
+   story:['官帽的桩型高，尖部自然，摆着好看，是文玩核桃里最"上相"的一类。','这一对还没上手，皮色浅，底子干净，看得出料子新。','44 的边宽在官帽里算中号，日常把玩正合适。']},
+
+  {cat:'walnut',id:'n4',no:'038',img:'n4',t:'公子帽 · 小尖',tag:'',sub:'公子帽',size:42,pan:0,nw:5,
+   m:'42mm · 矮桩 · 一对',p:1350,pin:'公子帽',bw:'42.0 / 41.8',zhuang:'矮桩',pd:'一对',pz:'白茬 · 微黄',kz:'28.6',
+   story:['公子帽比官帽矮一截，尖小，握在手里更服帖。','这一对是今年新下的，皮色偏黄，还没上过手。','小众品种，认的人不多，但盘出来的样子很耐看。']},
+
+  {cat:'walnut',id:'n1b',no:'022',img:'n1',t:'狮子头 · 四座楼',tag:'',sub:'狮子头',size:46,pan:0,nw:6,
+   m:'46mm · 矮桩厚边 · 白茬',p:6800,pin:'狮子头 · 四座楼',bw:'46.1 / 45.9',zhuang:'矮桩 厚边',pd:'精配一对',pz:'白茬 · 未上手',kz:'35.1',
+   story:['四座楼是狮子头里最认的品种，边厚、底座平，一对过 46 的越来越难找。','去年涞水那批货里就挑出这一对，两只的边宽差 0.2。','这个价位不催您，慢慢看，觉得对了再说。']},
+
+  {cat:'walnut',id:'n5b',no:'029',img:'n5',t:'虎头 · 盘龙纹',tag:'',sub:'虎头',size:40,pan:0,nw:7,
+   m:'40mm · 矮桩 · 白茬',p:980,pin:'虎头 · 盘龙纹',bw:'40.2 / 40.0',zhuang:'矮桩',pd:'一对',pz:'白茬 · 未上手',kz:'24.8',
+   story:['盘龙纹的纹路一圈一圈绕着走，比麦穗纹更野一点。','41 以下的边宽，价格门槛低，是新手练手的好选择。','一对只要九百八，不好高骛远，先把盘玩的手感养起来。']},
+
+  {cat:'walnut',id:'n2b',no:'044',img:'n2',t:'公子帽 · 高桩',tag:'已盘',sub:'公子帽',size:43,pan:1,nw:8,
+   m:'43mm · 高桩 · 已盘一年',p:2200,pin:'公子帽',bw:'43.0 / 42.9',zhuang:'高桩',pd:'一对',pz:'红润 · 已盘一年',kz:'30.9',
+   story:['公子帽做成高桩的少，这一对桩型立得起来，摆着比握着好看。','盘了一年，棱线已经亮了，颜色走的是深枣红。','适合喜欢高桩、看重心气的人。']},
+
+  /* ---------- 菩提手串 ---------- */
+  {cat:'bodhi',id:'b1',no:'041',img:'b1',t:'小金刚 · 108 颗',tag:'已盘',sub:'小金刚',size:9.8,pan:1,nw:1,
+   m:'9.8mm · 连肉 · 已盘一年',p:1680,pin:'小金刚 · 连肉',zj:'9.8',ks:'108 颗',pd:'整串',pz:'红润 · 已盘一年',kz:'62.4',
+   story:['小金刚挑的是"连肉"——肉和肉之间连着，不散。这一串肉感足，纹路走得顺。','我自己盘了一年，没上过油。现在颜色匀，往深红走。','108 颗，缠两圈半，日常戴最合适。']},
+
+  {cat:'bodhi',id:'b2',no:'045',img:'b2',t:'猴头 · 矮桩圆珠',tag:'已盘',sub:'猴头',size:18,pan:1,nw:2,
+   m:'18mm · 矮桩圆润 · 已盘',p:880,pin:'猴头 · 矮桩圆珠',zj:'18.0',ks:'14 颗',pd:'整串',pz:'油亮 · 已盘半年',kz:'46.2',
+   story:['猴头看圆度和脐眼。这一串颗颗矮桩，脐眼清楚，圆得整齐。','盘了半年，油亮但是不糊，孔道干净。','价格不高，适合想入门又不想从核桃开始的人。']},
+
+  {cat:'bodhi',id:'b3',no:'048',img:'b3',t:'凤眼菩提 · 108 颗',tag:'',sub:'凤眼',size:10.5,pan:0,nw:3,
+   m:'10.5mm · 眼正 · 白籽',p:1280,pin:'凤眼菩提',zj:'10.5',ks:'108 颗',pd:'整串',pz:'白籽 · 未上手',kz:'58.7',
+   story:['凤眼一只眼，眼要正、要深，歪了的就不值钱。这一串眼睛大多在正中间。','白籽，还没上手。凤眼盘出来颜色偏黄褐，比金刚秀气。','108 颗，穿的是原色绳，绳也是我自己编的。']},
+
+  {cat:'bodhi',id:'b1b',no:'052',img:'b1',t:'小金刚 · 单圈',tag:'',sub:'小金刚',size:12,pan:0,nw:4,
+   m:'12mm · 蜂窝纹 · 单圈',p:480,pin:'小金刚 · 蜂窝纹',zj:'12.0',ks:'18 颗',pd:'单圈',pz:'白茬 · 未上手',kz:'22.3',
+   story:['蜂窝纹的小金刚，纹路像蜂窝一样密，盘出来层次感强。','单圈 18 颗，手腕细的戴着不空。','四百八，门槛低，想试试小金刚的可以拿这串。']},
+
+  {cat:'bodhi',id:'b2b',no:'055',img:'b2',t:'猴头 · 光珠',tag:'',sub:'猴头',size:16,pan:0,nw:5,
+   m:'16mm · 光珠 · 白茬',p:650,pin:'猴头 · 光珠',zj:'16.0',ks:'16 颗',pd:'整串',pz:'白茬 · 未上手',kz:'38.6',
+   story:['光珠不打纹，看的就是材质本身的细腻度和圆度，做过工做不了假。','16 的光珠，盘起来手感顺，不像带纹的要刷。','白茬，颜色浅，盘三个月就能见变化。']},
+
+  {cat:'bodhi',id:'b3b',no:'059',img:'b3',t:'凤眼 · 手串',tag:'已盘',sub:'凤眼',size:11,pan:1,nw:6,
+   m:'11mm · 眼正 · 已盘',p:760,pin:'凤眼 · 手串',zj:'11.0',ks:'18 颗',pd:'单圈',pz:'黄褐 · 已盘半年',kz:'24.1',
+   story:['这一串盘了半年，颜色从白走到黄褐，眼睛周围更透。','18 颗单圈，日常戴不显眼，适合不喜欢张扬的人。','眼睛我一颗一颗看过，歪的挑掉了。']},
+
+  {cat:'bodhi',id:'b1c',no:'063',img:'b1',t:'金刚 · 蜂窝纹',tag:'精配',sub:'小金刚',size:9,pan:0,nw:7,
+   m:'9mm · 蜂窝密纹 · 白茬',p:2380,pin:'金刚 · 蜂窝密纹',zj:'9.0',ks:'108 颗',pd:'整串',pz:'白茬 · 未上手',kz:'54.2',
+   story:['9 的小金刚配 108 颗，串起来细，缠三圈。蜂窝纹密，盘出来一块一块的亮。','这一串是我从两百多颗里挑的，颗颗纹路对得上。','白茬，起点干净，后面颜色全靠您自己的手。']}
+];
+
+/* 参数项配置：label + 字段名 */
+var SPEC = {  walnut:[['品种','pin'],['边宽 · mm','bw'],['桩型','zhuang'],['配对','pd'],['皮质','pz'],['克重 · g/对','kz']],
+  bodhi:[['品种','pin'],['珠径 · mm','zj'],['颗数','ks'],['配对','pd'],['皮质','pz'],['克重 · g','kz']]
+};
+
+/* 后台作品数据覆盖：后台改价格、改标题、上下架，这里立刻跟着变 */
+(function applyWorks(){
+  var list = null;
+  /* 优先用已发布的作品数据（cfg.js），其次才是本机后台草稿 */
+  if(REMOTE.works && REMOTE.works.length){ list = REMOTE.works; }
+  else{
+    var raw = null;
+    try{ raw = localStorage.getItem('gh_works'); }catch(e){}
+    if(!raw) return;
+    try{ list = JSON.parse(raw); }catch(e){ return; }
+  }
+  if(!list || !list.length) return;
+  var ids = {};
+  list.forEach(function(w, i){
+    ids[w.id] = 1;
+    var cat = w.cat==='菩提手串' ? 'bodhi' : 'walnut';
+    var sub = String(w.t||'').split('·')[0].trim();
+    var size = parseFloat(w.spec) || 0;
+    var it = ITEMS.filter(function(x){ return x.id===w.id; })[0];
+    if(it){
+      it.t = w.t; it.no = w.no; it.p = w.p; it.cat = cat; it.img = w.img;
+      it.m = w.spec; it.size = size; it.nw = i+1;
+      if(sub) it.sub = sub;
+      it.gone = (w.status !== '在售');
+    }else{
+      ITEMS.push({cat:cat, id:w.id, no:w.no, img:w.img, t:w.t, sub:sub||'其他',
+        size:size, m:w.spec, p:w.p, pin:w.t, nw:i+1, pan:0,
+        story:['这件是刚从后台上新的，文案还没写。','在「作品管理」里补上图和来历，客户看到的立刻就是改后的。'],
+        bw:'—', zhuang:'—', pd:'—', pz:'—', kz:'—', zj:'—', ks:'—'});
+    }
+  });
+})();
+
+/* 品类配置：子分类、排序、尺寸档 */
+var CATS = {
+  walnut:{label:'文玩核桃',
+    subs:['全部','狮子头','虎头','官帽','公子帽'],
+    sorts:['综合','边宽 ↑','边宽 ↓','价格 ↑','价格 ↓','最新'],
+    bands:[{k:'全部尺寸'},{k:'40 以下',lo:0,hi:40},{k:'40–42',lo:40,hi:42},{k:'42–44',lo:42,hi:44},{k:'44 以上',lo:44,hi:999},{k:'已盘',pan:1}]},
+  bodhi:{label:'菩提手串',
+    subs:['全部','小金刚','猴头','凤眼'],
+    sorts:['综合','珠径 ↑','珠径 ↓','价格 ↑','价格 ↓','最新'],
+    bands:[{k:'全部珠径'},{k:'8 以下',lo:0,hi:8},{k:'8–10',lo:8,hi:10},{k:'10–12',lo:10,hi:12},{k:'12 以上',lo:12,hi:999},{k:'已盘',pan:1}]}
+};
+
+var catS = {cat:'walnut',sub:'全部',band:'全部尺寸',sort:0};
+var curItem = null;
+
+/* ================= 配置渲染：所有可见文案与模块开关都从这里出 ================= */
+function applyContent(){
+  var B = CFG.brand, L = CFG.layout;
+  document.title = B.name + ' | 文玩核桃 · 菩提手串';
+  document.getElementById('brandName').textContent = B.name;
+  document.getElementById('brandSub').textContent = B.sub;
+
+  var nb = document.getElementById('noticeBar');
+  if(L.notice && CFG.notice){
+    nb.style.display = 'flex';
+    document.getElementById('noticeTxt').textContent = CFG.notice;
+  }else{ nb.style.display = 'none'; }
+
+  var hero = ITEMS.filter(function(x){ return x.id===CFG.hero.id; })[0] || ITEMS[0];
+  var hImg = (CFG.pages && CFG.pages.home && CFG.pages.home.heroImg) ? imgSrc(CFG.pages.home.heroImg) : '';
+  document.getElementById('heroImg').src = hImg || ('./assets/'+hero.img+'.jpg');
+  document.getElementById('heroKicker').textContent = CFG.hero.kicker;
+  document.getElementById('heroTitle').innerHTML = CFG.hero.title;
+  document.getElementById('heroMeta').textContent = CFG.hero.meta;
+  document.getElementById('heroPrice').textContent = L.price ? money(hero.p) : '';
+
+  var qd = document.getElementById('quick');
+  if(L.quick){
+    qd.style.display = 'flex';
+    var h = '';
+    CFG.quick.forEach(function(q){
+      h += '<div class="q" onclick="jump(\''+q.cat+'\',\''+(q.sub||'全部')+'\')">'
+         +   '<div class="q-img"><img src="./assets/'+q.img+'.jpg" alt=""></div>'
+         +   '<span>'+q.label+'</span></div>';
+    });
+    qd.innerHTML = h;
+  }else{ qd.style.display = 'none'; }
+
+  document.getElementById('barBlock').style.display = L.bar ? 'flex' : 'none';
+
+  document.getElementById('aboutName').textContent = B.name;
+  document.getElementById('aboutCity').textContent = B.city;
+  var s = '';
+  B.story.forEach(function(t){ s += '<p>'+t+'</p>'; });
+  document.getElementById('aboutStory').innerHTML = s;
+  document.getElementById('aboutGood').textContent = B.good;
+  document.getElementById('aboutSign').textContent = B.sign;
+  document.getElementById('dsign').textContent = B.sign;
+  document.getElementById('aboutAddr').innerHTML = B.addr + '<small>'+B.hours+'</small>';
+  document.getElementById('aboutDouyin').innerHTML = B.douyin + '<small>上手视频、开青皮直播，每周更新</small>';
+  document.getElementById('aboutKefu').textContent = B.kefu;
+
+  var p = '';
+  CFG.policy.forEach(function(t){ p += '<p>'+t+'</p>'; });
+  document.getElementById('dpolicy').innerHTML = p;
+  var sh = '';
+  CFG.ship.forEach(function(t){ sh += '<p>'+t+'</p>'; });
+  document.getElementById('cship').innerHTML = sh;
+
+  renderHome();
+  applyPages();
+}
+
+/* 图片来源：@key 是后台传上来的图（cfg.js 或本机草稿里），其余按素材名取 */
+function imgSrc(k){
+  if(!k) return '';
+  if(/^(data:|blob:|https?:|\.\/|assets\/|\/)/.test(k)) return k;
+  if(k.charAt(0)==='@'){
+    var key = k.slice(1);
+    if(REMOTE.images && REMOTE.images[key]) return REMOTE.images[key];
+    try{ return localStorage.getItem('gh_img_'+key) || ''; }catch(e){ return ''; }
+  }
+  return './assets/'+k+'.jpg';
+}
+function pget(p){
+  var a=p.split('.'), t=CFG, i;
+  for(i=0;i<a.length;i++){ if(t==null) return ''; t=t[a[i]]; }
+  return t==null ? '' : t;
+}
+function putTxt(id, p){
+  var e=document.getElementById(id); if(!e) return;
+  e.textContent = pget(p);
+}
+function putHtml(id, p){
+  var e=document.getElementById(id); if(!e) return;
+  e.innerHTML = pget(p);
+}
+function qrPaint(canvasId, imgId, src, seed){
+  var c=document.getElementById(canvasId), im=document.getElementById(imgId);
+  if(!c) return;
+  if(src){
+    if(im){ im.src=src; im.style.display='block'; }
+    c.style.display='none';
+  }else{
+    if(im){ im.style.display='none'; im.removeAttribute('src'); }
+    c.style.display='block';
+    drawQR(canvasId, seed);
+  }
+}
+
+/* 逐页文案：后台「页面管理」写什么，这里就是什么 */
+function applyPages(){
+  var G = CFG.pages || {};
+
+  /* 首页 */
+  putTxt('barTitle','pages.home.barTitle');
+  putTxt('barSort','pages.home.barSort');
+  putTxt('homeEnd','pages.home.endNote');
+
+  /* 分类 */
+  putTxt('catTitle','pages.category.title');
+
+  /* 详情 */
+  putTxt('dSpecH','pages.detail.secSpec');
+  putTxt('dStoryH','pages.detail.secStory');
+  putTxt('dPolicyH','pages.detail.secPolicy');
+  putTxt('dVideoTag','pages.detail.videoTag');
+  putTxt('dShipTag','pages.detail.shipTag');
+  putTxt('dKfTxt','pages.detail.btnKf');
+  putTxt('dBuyBtn','pages.detail.btnBuy');
+
+  /* 结算 */
+  putTxt('ckTitle','pages.checkout.title');
+  putTxt('ckShipH','pages.checkout.shipTitle');
+  putTxt('ckNote','pages.checkout.noteHint');
+  putTxt('payBtn','pages.checkout.payBtn');
+  putTxt('ckHint','pages.checkout.payHint');
+
+  /* 支付成功 */
+  putTxt('succTitle','pages.success.title');
+  putTxt('sqTitle','pages.success.qrTitle');
+  putHtml('sqDesc','pages.success.qrDesc');
+  putTxt('sqName','pages.success.qrName');
+  qrPaint('qr1','sqrImg', imgSrc(pget('pages.success.qrImg')), 20261113);
+
+  /* 我的 */
+  putTxt('myTitle','pages.orders.title');
+  putTxt('myG1','pages.orders.g1');
+  putTxt('myG2','pages.orders.g2');
+  putTxt('myFoot','pages.orders.foot');
+  putTxt('myAboutLabel','pages.orders.aboutLabel');
+
+  /* 订单详情 */
+  putTxt('odTitle','pages.order.title');
+  putTxt('odStatusT','pages.order.statusTitle');
+  putHtml('odStatusD','pages.order.statusDesc');
+  putTxt('odBtn1','pages.order.btn1');
+  putTxt('odBtn2','pages.order.btn2');
+
+  /* 关于 */
+  putTxt('abTitle','pages.about.title');
+  putTxt('abQrTitle','pages.about.qrTitle');
+  putHtml('abQrDesc','pages.about.qrDesc');
+  putTxt('abQrName','pages.about.qrName');
+  putTxt('abBtn','pages.about.btn');
+  qrPaint('qr2','abQrImg', imgSrc(pget('pages.about.qrImg')), 87654321);
+
+  var shop = imgSrc(pget('pages.about.shopImg'));
+  var sw = document.getElementById('abShopWrap');
+  if(sw){
+    if(shop){
+      sw.style.display='block';
+      document.getElementById('abShop').src = shop;
+      document.getElementById('abShopCap').textContent = pget('pages.about.shopCap');
+    }else{ sw.style.display='none'; }
+  }
+
+  var decl = pget('pages.about.declare') || [];
+  var dw = document.getElementById('abDeclareWrap');
+  if(dw){
+    if(decl.length){
+      dw.style.display='block';
+      putTxt('abDeclareH','pages.about.declareTitle');
+      var dh=''; decl.forEach(function(t){ dh += '<p>'+t+'</p>'; });
+      document.getElementById('abDeclare').innerHTML = dh;
+    }else{ dw.style.display='none'; }
+  }
+
+  /* 上新 */
+  putTxt('pubTitle','pages.publish.title');
+  putHtml('pubUpTip','pages.publish.upTip');
+  putTxt('pubCheck','pages.publish.check');
+  putTxt('pubBtn','pages.publish.btn');
+
+  /* 成功页描述里的 {item} 用当前作品名替换 */
+  var d = pget('pages.success.desc');
+  if(d){
+    document.getElementById('succDesc').innerHTML =
+      String(d).replace(/\{item\}/g, curItem ? curItem.t : '这件');
+  }
+}
+
+function jump(cat, sub){
+  if(CATS[cat]){ setCat(cat); if(sub && sub!=='全部') setSub(sub); }
+  go('category');
+}
+function openHero(){
+  var it = ITEMS.filter(function(x){ return x.id===CFG.hero.id; })[0] || ITEMS[0];
+  openItem(it.id);
+}
+function renderHome(){
+  var list = ITEMS.filter(function(x){ return !x.gone; }).slice(0,6);
+  var ratio = ['h1','h2','h2','h3','h3','h2'];
+  var h = '';
+  list.forEach(function(x,i){
+    h += '<div class="card" onclick="openItem(\''+x.id+'\')">'
+      +     '<div class="imgwrap"><img class="'+ratio[i%6]+'" src="./assets/'+x.img+'.jpg" alt=""></div>'
+      +     '<div class="c-t">'+x.t+'</div>'
+      +     '<div class="c-m">'+x.m+'</div>'
+      +     (CFG.layout.price ? '<div class="c-p">'+money(x.p)+'</div>' : '')
+      +   '</div>';
+  });
+  h += '<div class="card sold"><div class="imgwrap"><img class="h2" src="./assets/n3.jpg" alt=""></div>'
+    +  '<div class="c-t">官帽 · 45mm</div><div class="c-m">已结缘 · 可预定同料</div>'
+    +  '<div class="c-p">已结缘</div></div>';
+  document.getElementById('homeGrid').innerHTML = h;
+  document.getElementById('barCount').textContent = ITEMS.length + ' 件';
+}
+
+function itemsOf(cat){
+  return ITEMS.filter(function(x){ return x.cat===cat; });
+}
+function money(n){ return '¥' + n.toLocaleString('en-US'); }
+
+function setCat(k){ catS.cat=k; catS.sub='全部'; catS.band=CATS[k].bands[0].k; catS.sort=0; renderCat(); }
+function setSub(s){ catS.sub=s; renderCat(); }
+function setBand(k){ catS.band=k; renderCat(); }
+function setSort(i){ catS.sort=i; renderCat(); }
+
+function renderCat(){
+  var d = CATS[catS.cat], all = itemsOf(catS.cat).filter(function(x){ return !x.gone; }), h;
+
+  h = '';
+  for(var k in CATS){
+    h += '<div class="ct'+(k===catS.cat?' on':'')+'" onclick="setCat(\''+k+'\')">'+CATS[k].label+'</div>';
+  }
+  document.getElementById('catTabs').innerHTML = h;
+
+  h = '';
+  d.subs.forEach(function(s){
+    var n = s==='全部' ? all.length : all.filter(function(x){ return x.sub===s; }).length;
+    h += '<div class="sc'+(s===catS.sub?' on':'')+'" onclick="setSub(\''+s+'\')">'+s+'<em>'+n+'</em></div>';
+  });
+  document.getElementById('subcat').innerHTML = h;
+
+  h = '';
+  d.sorts.forEach(function(s,i){
+    h += '<div class="sb'+(i===catS.sort?' on':'')+'" onclick="setSort('+i+')">'+s+'</div>';
+  });
+  document.getElementById('sortbar').innerHTML = h;
+
+  h = '';
+  d.bands.forEach(function(b){
+    h += '<div class="sz'+(b.k===catS.band?' on':'')+'" onclick="setBand(\''+b.k+'\')">'+b.k+'</div>';
+  });
+  document.getElementById('sizerow').innerHTML = h;
+
+  var band = d.bands.filter(function(b){ return b.k===catS.band; })[0] || d.bands[0];
+  var list = all.filter(function(x){
+    if(catS.sub!=='全部' && x.sub!==catS.sub) return false;
+    if(band.pan) return x.pan===1;
+    if(band.lo===undefined) return true;
+    return x.size>=band.lo && x.size<band.hi;
+  });
+  var s = catS.sort;
+  if(s===1) list.sort(function(a,b){ return a.size-b.size; });
+  else if(s===2) list.sort(function(a,b){ return b.size-a.size; });
+  else if(s===3) list.sort(function(a,b){ return a.p-b.p; });
+  else if(s===4) list.sort(function(a,b){ return b.p-a.p; });
+  else if(s===5) list.sort(function(a,b){ return a.nw-b.nw; });
+
+  if(!list.length){
+    var emp = String(pget('pages.category.empty') || '这一档暂时没有货').split('|');
+    document.getElementById('rowlist').innerHTML = '<div class="empty">' + emp.join('<br>') + '</div>';
+  }else{
+    h = '';
+    list.forEach(function(x){
+      h += '<div class="ri" onclick="openItem(\''+x.id+'\')">'
+         +   '<div class="rimg"><img src="./assets/'+x.img+'.jpg" alt=""></div>'
+         +   '<div class="ri-b">'
+         +     '<div class="ri-t">'+x.t+(x.tag?'<span class="tagline">'+x.tag+'</span>':'')+'</div>'
+         +     '<div class="ri-m">'+x.m+'</div>'
+         +     (CFG.layout.price ? '<div class="ri-p">'+money(x.p)+'</div>' : '')
+         +   '</div>'
+         + '</div>';
+    });
+    document.getElementById('rowlist').innerHTML = h;
+  }
+  document.getElementById('catFoot').textContent =
+    String(pget('pages.category.footTpl') || '— 共 {n} 件 · {cat} —')
+      .replace(/\{n\}/g, list.length).replace(/\{cat\}/g, d.label);
+  document.getElementById('page-category').scrollTop = 0;
+}
+
+function openItem(id){
+  var it = ITEMS.filter(function(x){ return x.id===id; })[0];
+  if(!it) return;
+  curItem = it;
+  renderDetail(it);
+  go('detail');
+}
+
+function renderDetail(it){
+  var g = document.getElementById('dgallery');
+  g.innerHTML = '<div class="gal-slide"><img src="./assets/'+it.img+'.jpg" alt="" style="transform:scale(1.14)"></div>'
+    + '<div class="gal-slide"><img src="./assets/'+it.img+'.jpg" alt="" style="transform:scale(1.72);object-position:center 45%"></div>'
+    + '<div class="gal-slide"><img src="./assets/'+it.img+'.jpg" alt="" style="transform:scale(2.05);object-position:38% 55%"></div>';
+  document.getElementById('dvideo').src = './assets/'+it.img+'.jpg';
+  document.getElementById('dno').textContent = '编 号 · '+it.no;
+  document.getElementById('dtitle').textContent = it.t + (it.cat==='walnut' ? ' ' + it.size + 'mm' : '');
+  document.getElementById('dsub').textContent = it.cat==='walnut'
+    ? (it.m.split(' · ').slice(1).join(' · ') || it.pd)
+    : it.m;
+  document.getElementById('dprice').textContent = CFG.layout.price ? money(it.p) : '价格私聊';
+  document.getElementById('donly').textContent = it.pan ? '已盘 · 仅此一件' : '仅此一件';
+
+  var h = '';
+  SPEC[it.cat].forEach(function(p){
+    h += '<div><label>'+p[0]+'</label><b>'+it[p[1]]+'</b></div>';
+  });
+  document.getElementById('dspec').innerHTML = h;
+
+  h = '';
+  it.story.forEach(function(t){ h += '<p>'+t+'</p>'; });
+  document.getElementById('dstory').innerHTML = h;
+}
+
+function renderCheckout(it){
+  if(!it) return;
+  document.getElementById('cthumb').src = './assets/'+it.img+'.jpg';
+  document.getElementById('cname').textContent = it.t + ' ' + it.size + 'mm';
+  document.getElementById('cmeta').textContent = '编号 '+it.no+' · '+it.pd;
+  document.getElementById('cprice').textContent = money(it.p);
+  document.getElementById('ctotal').textContent = money(it.p);
+  document.getElementById('cterms').innerHTML = it.cat==='walnut'
+    ? pget('pages.checkout.termsWalnut')
+    : pget('pages.checkout.termsBodhi');
+  var d = pget('pages.success.desc');
+  if(d) document.getElementById('succDesc').innerHTML = String(d).replace(/\{item\}/g, it.t);
+}
+
+function go(name){
+  var pages = document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++) pages[i].classList.remove('active');
+  var el = document.getElementById('page-'+name);
+  if(!el) return;
+  if(name==='detail' && !curItem){ curItem = ITEMS[0]; renderDetail(curItem); }
+  if(name==='checkout'){ renderCheckout(curItem); }
+  el.classList.add('active');
+  el.scrollTop = 0;
+  document.querySelector('.tabbar').style.display = TABS.indexOf(name)>-1 ? 'flex' : 'none';
+  var tabs = document.querySelectorAll('.tab');
+  for(var j=0;j<tabs.length;j++){
+    tabs[j].classList.toggle('on', tabs[j].getAttribute('data-tab')===name);
+  }
+  document.getElementById('phone').classList.toggle('dark-top', DARK_TOP.indexOf(name)>-1);
+  if(name==='success'){ drawQR('qr1',20261113); }
+  if(name==='about'){ drawQR('qr2',87654321); }
+  try{ history.replaceState(null,'','#'+name); }catch(e){}
+}
+function boot(){
+  if(CFG.cats){
+    for(var ck in CFG.cats){
+      if(CATS[ck]){ CATS[ck].label = CFG.cats[ck].label; CATS[ck].subs = CFG.cats[ck].subs.slice(); }
+    }
+  }
+  applyContent();
+  renderCat();
+  curItem = ITEMS[0];
+  renderDetail(curItem);
+  applyPages();
+  var q = new URLSearchParams(location.search);
+  var qc = q.get('cat');
+  if(qc && CATS[qc]){ setCat(qc); }
+  var qs = q.get('sub');
+  if(qs){ setSub(qs); }
+  var qi = q.get('item');
+  if(qi){ var it = ITEMS.filter(function(x){ return x.id===qi; })[0]; if(it){ curItem=it; renderDetail(it); } }
+  var h = (location.hash||'').replace('#','');
+  go(h || 'home');
+  var sc = new URLSearchParams(location.search).get('scroll');
+  if(sc){ setTimeout(function(){ var p=document.querySelector('.page.active'); if(p) p.scrollTop = +sc; }, 150); }
+}
+
+var toastTimer;
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('on'); }, 2000);
+}
+
+var checked = false;
+function toggleCheck(){
+  checked = !checked;
+  document.getElementById('cbox').classList.toggle('on', checked);
+  document.getElementById('payBtn').classList.toggle('off', !checked);
+}
+function pay(){
+  if(!checked){ toast('请先勾选验货确认'); return; }
+  toast('正在调起微信支付…');
+  if(curItem){
+    document.getElementById('succDesc').innerHTML =
+      String(pget('pages.success.desc')).replace(/\{item\}/g, curItem.t);
+  }
+  setTimeout(function(){ go('success'); }, 700);
+}
+
+function dotSync(el){
+  var idx = Math.round(el.scrollLeft / el.clientWidth);
+  var dots = el.parentElement.querySelectorAll('.dot');
+  for(var i=0;i<dots.length;i++) dots[i].classList.toggle('on', i===idx);
+}
+
+function drawQR(id, seed){
+  var c = document.getElementById(id);
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  var S = c.width, N = 25, cell = S/N;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0,0,S,S);
+  ctx.fillStyle = '#161513';
+  var r = seed;
+  function rnd(){ r = (r*9301 + 49297) % 233280; return r/233280; }
+  function inF(i,j){
+    if(i<8 && j<8) return true;
+    if(i>=N-8 && j<8) return true;
+    if(i<8 && j>=N-8) return true;
+    return false;
+  }
+  for(var i=0;i<N;i++){
+    for(var j=0;j<N;j++){
+      if(inF(i,j)) continue;
+      if(rnd() > .52) ctx.fillRect(i*cell, j*cell, cell, cell);
+    }
+  }
+  function finder(x,y){
+    ctx.fillStyle='#161513'; ctx.fillRect(x*cell,y*cell,7*cell,7*cell);
+    ctx.fillStyle='#FFFFFF'; ctx.fillRect((x+1)*cell,(y+1)*cell,5*cell,5*cell);
+    ctx.fillStyle='#161513'; ctx.fillRect((x+2)*cell,(y+2)*cell,3*cell,3*cell);
+  }
+  finder(0,0); finder(N-7,0); finder(0,N-7);
+}
+
+function tick(){
+  var d = new Date();
+  document.getElementById('clock').textContent =
+    d.getHours() + ':' + (d.getMinutes()<10?'0':'') + d.getMinutes();
+}
+tick(); setInterval(tick, 20000);
+drawQR('qr1',20261113);
+drawQR('qr2',87654321);
+boot();
+</script>
+</body>
+</html>
