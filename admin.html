@@ -271,22 +271,12 @@ input[type=color]{width:38px;height:30px;padding:2px;border:1px solid var(--line
   <div class="lg-card">
     <div class="lg-brand">核樂不煩 · STUDIO</div>
     <div class="lg-sub">管理后台 · 仅限授权账号</div>
-    <div class="lg-field"><label>账号（邮箱）</label><input id="lgUser" type="email" placeholder="管理员邮箱" autocomplete="off"></div>
+    <div class="lg-field"><label>账号</label><input id="lgUser" type="text" placeholder="管理员账号" value="920266458@qq.com" autocomplete="off"></div>
     <div class="lg-field"><label>密码</label><input id="lgPwd" type="password" placeholder="请输入密码" autocomplete="off"></div>
     <div class="lg-err" id="lgErr"></div>
     <button class="lg-btn" onclick="doLogin()" id="lgBtn">登 录</button>
     <div class="lg-hint" id="lgHint">
-      只有管理员账号能进。第一次登录先点下方「设置密码」，之后就是账号密码直接登录。
-    </div>
-    <div style="text-align:center;margin-top:2px">
-      <a href="javascript:void(0)" onclick="toggleForgot()" id="forgotLink" style="font-size:12.5px;color:var(--brand, #B08A4A);text-decoration:none">设置密码（首次 / 忘记密码）</a>
-    </div>
-    <div id="forgotBox" style="display:none;margin-top:10px;padding-top:12px;border-top:1px dashed var(--line, #eee)">
-      <div class="lg-field"><label>新密码</label><input id="fgPwd" type="password" placeholder="至少 6 位" autocomplete="off"></div>
-      <div class="lg-field"><label>邮件里的数字</label><input id="fgCode" placeholder="6 位数字" autocomplete="off" maxlength="6"></div>
-      <button class="lg-btn" onclick="doReset()" id="fgBtn" style="margin-top:4px">设 置 密 码</button>
-      <div class="lg-hint" id="fgHint" style="margin-top:8px">先点下方「发送邮件」，去邮箱取 6 位数字。</div>
-      <button class="lg-btn" onclick="sendReset()" id="fgSend" style="background:var(--ink1,#444);margin-top:8px">发送邮件</button>
+      仅限店主账号登录。密码不对进不来。
     </div>
   </div>
 </div>
@@ -444,7 +434,7 @@ function friendlyErr(m){
 
 function doLogin(){
   var email = $('lgUser').value.trim(), pwd = $('lgPwd').value;
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('请输入正确的账号（邮箱）'); return; }
+  if(!email){ setErr('请输入账号'); return; }
   if(!pwd){ setErr('请输入密码'); return; }
   if(!cloud){ setErr('云服务没连上（' + (cloudErr || '原因未知') + '），刷新页面重试'); return; }
   $('lgBtn').textContent = '登 录 中…';
@@ -467,68 +457,6 @@ function doLogin(){
   }).catch(function(e){
     $('lgBtn').textContent = '登 录';
     setErr('登录失败：' + (e && e.message ? e.message : '网络异常'));
-  });
-}
-
-/* ==================== 设置 / 重置密码 ==================== */
-var resetStarted = false;
-
-function toggleForgot(){
-  var box = $('forgotBox');
-  var show = box.style.display === 'none';
-  box.style.display = show ? 'block' : 'none';
-  $('forgotLink').textContent = show ? '收起' : '设置 / 重置密码';
-}
-
-function sendReset(){
-  var email = $('lgUser').value.trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setErr('先在上方填好账号（邮箱）'); return; }
-  if(!cloud){ setErr('云服务没连上（' + (cloudErr || '原因未知') + '），刷新页面重试'); return; }
-  $('fgSend').textContent = '发 送 中…';
-  cloud.auth.resetPasswordForEmail(email).then(function(r){
-    $('fgSend').textContent = '重新发送邮件';
-    if(r.error){ setErr(friendlyErr(r.error.message) || '发送失败'); return; }
-    resetStarted = true;
-    setErr('');
-    $('fgHint').textContent = '邮件已发到 ' + email + '，把邮件里的 6 位数字和新密码填进去。';
-  }).catch(function(e){
-    $('fgSend').textContent = '发送邮件';
-    setErr('发送失败：' + (e && e.message ? e.message : '网络异常'));
-  });
-}
-
-function doReset(){
-  var email = $('lgUser').value.trim();
-  var pwd = $('fgPwd').value, code = $('fgCode').value.trim();
-  if(!resetStarted){ setErr('请先点「发送邮件」'); return; }
-  if(!/^\d{4,8}$/.test(code)){ setErr('请输入邮件里的 6 位数字'); return; }
-  if(pwd.length < 6){ setErr('新密码至少 6 位'); return; }
-  if(!cloud){ setErr('云服务没连上，刷新页面重试'); return; }
-  $('fgBtn').textContent = '设 置 中…';
-  setErr('');
-  // resetPasswordForEmail 返回一个可继续的流程对象，用 nonce + password 完成设置
-  cloud.auth.resetPasswordForEmail(email).then(function(started){
-    if(started.error){ $('fgBtn').textContent = '设 置 密 码'; setErr(friendlyErr(started.error.message) || '发送失败'); return; }
-    if(!started.data || !started.data.updateUser){ $('fgBtn').textContent = '设 置 密 码'; setErr('流程异常，请重试'); return; }
-    return started.data.updateUser({ nonce: code, password: pwd }).then(function(done){
-      $('fgBtn').textContent = '设 置 密 码';
-      if(done.error){ setErr(friendlyErr(done.error.message) || '设置失败，验证码可能不对'); return; }
-      // 成功后 SDK 会自动登录，直接进入
-      $('fgPwd').value = ''; $('fgCode').value = '';
-      resetStarted = false;
-      toggleForgot();
-      cloud.database.rpc('claim_admin').then(function(a){
-        if(!a.error && a.data === true){
-          afterLogin((done.data && done.data.user) || null);
-        } else {
-          setErr('密码已设置，请用新密码登录');
-          $('lgPwd').focus();
-        }
-      });
-    });
-  }).catch(function(e){
-    $('fgBtn').textContent = '设 置 密 码';
-    setErr('设置失败：' + (e && e.message ? e.message : '网络异常'));
   });
 }
 
