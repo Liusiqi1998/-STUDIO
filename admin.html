@@ -439,6 +439,9 @@ function doLogout(){
 function loadLocalAll(){
   loadCfg();
   loadWorks();
+  loadOrders();
+  loadCustomers();
+  loadAccounts();
   var k = S.page || 'dash';
   go(k);
 }
@@ -645,14 +648,14 @@ function renderOrders(){
     h += '<button class="'+(S.orderTab===t?'on':'')+'" onclick="S.orderTab=\''+t+'\';renderOrders()">'+t+' '+n+'</button>';
   });
   h += '</div><span class="sp"></span>'
-    +  '<select class="search" style="width:auto"><option>最近 30 天</option><option>本月</option><option>全部时间</option></select>'
-    +  '<button class="btn">导出表格</button></div>';
+    +  '<button class="btn primary" onclick="editOrder()">+ 新增订单</button></div>';
 
   var list = ORDERS.filter(function(o){ return S.orderTab==='全部' || o.status===S.orderTab; });
   h += '<div class="card"><table><thead><tr><th>订单号</th><th>作品</th><th>买家</th><th>金额</th><th>付款时间</th><th>状态</th><th>快递单号</th><th style="text-align:right">操作</th></tr></thead><tbody>';
   if(!list.length){ h += '<tr><td colspan="8" class="empty-row">这一栏没有订单</td></tr>'; }
   list.forEach(function(o){
     var tg = o.status==='待发货'?'wait':(o.status==='已发货'?'sent':(o.status==='已完成'?'done':'cancel'));
+    var idx = ORDERS.indexOf(o);
     h += '<tr>'
       + '<td class="num">'+o.no+'</td>'
       + '<td><div class="wcell"><img class="thumb" src="./assets/'+o.img+'.jpg" alt=""><div class="t">'+o.t+'</div></div></td>'
@@ -662,12 +665,80 @@ function renderOrders(){
       + '<td><span class="tag '+tg+'">'+o.status+'</span></td>'
       + '<td class="num" style="color:var(--ink3);font-size:11.5px">'+(o.expNo||'—')+'</td>'
       + '<td style="text-align:right;white-space:nowrap">'
-      + (o.status==='待发货' ? '<button class="btn primary sm" onclick="shipOrder(\''+o.no+'\')">发货</button>' : '<button class="btn sm" onclick="viewOrder(\''+o.no+'\')">详情</button>')
+      + (o.status==='待发货' ? '<button class="btn primary sm" onclick="shipOrder(\''+o.no+'\')">发货</button>' : '')
+      + '<button class="btn sm" style="margin-left:4px" onclick="editOrder('+idx+')">编辑</button>'
+      + '<button class="btn sm" style="margin-left:4px" onclick="delOrder('+idx+')">删除</button>'
       + '</td></tr>';
   });
   h += '</tbody></table></div>';
-  h += '<div style="margin-top:12px;font-size:11.5px;color:var(--ink4)">订单不删除，作废的标「已取消」，保留记录备查</div>';
+  h += '<div style="margin-top:12px;font-size:11.5px;color:var(--ink4)">订单可编辑、可删除；作废的单子标「已取消」，保留记录备查</div>';
   $('content').innerHTML = h;
+}
+
+function editOrder(idx){
+  var o = (idx===undefined || idx===null || idx==='') ? null : ORDERS[idx];
+  $('drTitle').textContent = o ? '编辑订单' : '新增订单';
+  var h = '';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>订单号</label><input id="o_no" value="'+esc(o?o.no:'')+'" placeholder="留空自动生成"></div>';
+  h += '<div class="field"><label>作品标题<em>*</em></label><input id="o_t" value="'+esc(o?o.t:'')+'" placeholder="如 狮子头 · 白狮子 45mm"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>买家<em>*</em></label><input id="o_buyer" value="'+esc(o?o.buyer:'')+'" placeholder="如 陈先生"></div>';
+  h += '<div class="field"><label>手机号</label><input id="o_phone" value="'+esc(o?o.phone:'')+'" placeholder="如 13800000000"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>金额（元）<em>*</em></label><input id="o_p" type="number" value="'+(o?o.p:'')+'" placeholder="4800"></div>';
+  h += '<div class="field"><label>状态</label><select id="o_st">'
+    + ['待发货','已发货','已完成','已取消'].map(function(s){ return '<option'+(o&&o.status===s?' selected':'')+'>'+s+'</option>'; }).join('')
+    + '</select></div>';
+  h += '</div>';
+  h += '<div class="field"><label>收货地址</label><input id="o_addr" value="'+esc(o?o.addr:'')+'" placeholder="省市 + 详细地址"></div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>快递公司</label><input id="o_exp" value="'+esc(o?o.exp:'')+'" placeholder="如 顺丰速运"></div>';
+  h += '<div class="field"><label>运单号</label><input id="o_expNo" value="'+esc(o?o.expNo:'')+'" placeholder="如 SF1234567890"></div>';
+  h += '</div>';
+  h += '<div class="field"><label>付款时间</label><input id="o_payAt" value="'+esc(o?o.payAt:'')+'" placeholder="如 11-15 16:30"></div>';
+  $('drBody').innerHTML = h;
+  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
+    + '<button class="btn primary" onclick="saveOrder('+(idx===undefined||idx===null?'-1':idx)+')">'+(o?'保存修改':'添加订单')+'</button>';
+  openDrawer();
+}
+
+function saveOrder(idx){
+  var t = $('o_t').value.trim(), buyer = $('o_buyer').value.trim(), p = +$('o_p').value;
+  if(!t || !buyer || !p){ toast('作品、买家、金额必填'); return; }
+  var st = $('o_st').value;
+  var no = $('o_no').value.trim();
+  if(!no){ no = 'GH' + new Date().getFullYear() + ('0'+(new Date().getMonth()+1)).slice(-2) + ('0'+new Date().getDate()).slice(-2) + String(Date.now()).slice(-4); }
+  var obj = {
+    no: no, t: t, buyer: buyer, phone: $('o_phone').value.trim(), p: p,
+    status: st, addr: $('o_addr').value.trim(),
+    exp: $('o_exp').value.trim(), expNo: $('o_expNo').value.trim(),
+    payAt: $('o_payAt').value.trim()
+  };
+  if(idx === -1){
+    obj.wid = ''; obj.img = 'n1';
+    ORDERS.unshift(obj);
+    toast('已添加订单');
+  }else{
+    var old = ORDERS[idx];
+    obj.wid = old.wid; obj.img = old.img;
+    ORDERS[idx] = obj;
+    toast('已保存修改');
+  }
+  saveOrders();
+  closeDrawer(); buildNav(); renderOrders();
+}
+
+function delOrder(idx){
+  var o = ORDERS[idx];
+  if(!o) return;
+  if(!confirm('确定删除订单「'+o.no+'」吗？删除后不可恢复。')) return;
+  ORDERS.splice(idx, 1);
+  saveOrders();
+  buildNav(); renderOrders();
+  toast('已删除');
 }
 
 function shipOrder(no){
@@ -699,6 +770,7 @@ function confirmShip(no){
   var exp = $('s_exp').value, expNo = $('s_no').value.trim();
   if(!expNo){ toast('运单号必填'); return; }
   o.exp = exp; o.expNo = expNo; o.status = '已发货';
+  saveOrders();
   closeDrawer(); buildNav();
   S.orderTab = '全部'; renderOrders();
   toast('已发货，客户微信会收到通知');
@@ -724,97 +796,189 @@ function viewOrder(no){
 }
 
 /* ==================== 客户 ==================== */
+var customerQ = '', customerSrc = '全部来源';
 function renderCustomers(){
+  var srcs = ['全部来源','抖音','搜索','朋友介绍'];
+  var list = CUSTOMERS.filter(function(c){
+    if(customerSrc!=='全部来源' && c.src!==customerSrc) return false;
+    if(customerQ && (c.name+c.phone).indexOf(customerQ)<0) return false;
+    return true;
+  });
   var h = '<div class="toolbar">';
-  h += '<input class="search" placeholder="搜名字或手机号">';
-  h += '<select class="search" style="width:auto"><option>全部来源</option><option>抖音</option><option>搜索</option><option>朋友介绍</option></select>';
-  h += '<span class="sp"></span><span style="font-size:11.5px;color:var(--ink4)">共 '+CUSTOMERS.length+' 位客户</span></div>';
+  h += '<input class="search" id="cq" placeholder="搜名字或手机号" value="'+esc(customerQ)+'" oninput="customerQ=this.value;renderCustomers()">';
+  h += '<select class="search" style="width:auto" onchange="customerSrc=this.value;renderCustomers()">';
+  srcs.forEach(function(s){ h += '<option'+(s===customerSrc?' selected':'')+'>'+s+'</option>'; });
+  h += '</select>';
+  h += '<span class="sp"></span><button class="btn primary" onclick="editCustomer()">+ 新增客户</button></div>';
   h += '<div class="card"><table><thead><tr><th>客户</th><th>手机号</th><th>首次到访</th><th>订单</th><th>累计消费</th><th>来源</th><th>备注</th><th style="text-align:right">操作</th></tr></thead><tbody>';
-  CUSTOMERS.forEach(function(c,i){
+  if(!list.length){ h += '<tr><td colspan="8" class="empty-row">没有符合条件的客户</td></tr>'; }
+  list.forEach(function(c){
+    var idx = CUSTOMERS.indexOf(c);
     h += '<tr>'
-      + '<td><div style="display:flex;align-items:center;gap:9px"><div class="avatar" style="width:26px;height:26px;background:#F2F1EE;color:var(--ink2);font-size:11px">'+c.name.slice(0,1)+'</div>'+c.name+'</div></td>'
-      + '<td class="num" style="color:var(--ink3)">'+c.phone+'</td>'
-      + '<td class="num" style="color:var(--ink3)">'+c.first+'</td>'
+      + '<td><div style="display:flex;align-items:center;gap:9px"><div class="avatar" style="width:26px;height:26px;background:#F2F1EE;color:var(--ink2);font-size:11px">'+c.name.slice(0,1)+'</div>'+esc(c.name)+'</div></td>'
+      + '<td class="num" style="color:var(--ink3)">'+esc(c.phone)+'</td>'
+      + '<td class="num" style="color:var(--ink3)">'+esc(c.first)+'</td>'
       + '<td class="num">'+c.orders+'</td>'
       + '<td class="money">'+money(c.amount)+'</td>'
-      + '<td><span class="tag out">'+c.src+'</span></td>'
-      + '<td class="note-cell'+(c.note?'':' empty')+'">'+(c.note || '—')+'</td>'
-      + '<td style="text-align:right"><button class="btn sm" onclick="editNote('+i+')">备注</button></td>'
+      + '<td><span class="tag out">'+esc(c.src)+'</span></td>'
+      + '<td class="note-cell'+(c.note?'':' empty')+'">'+(c.note ? esc(c.note) : '—')+'</td>'
+      + '<td style="text-align:right;white-space:nowrap"><button class="btn sm" onclick="editCustomer('+idx+')">编辑</button><button class="btn sm" style="margin-left:4px" onclick="delCustomer('+idx+')">删除</button></td>'
       + '</tr>';
   });
   h += '</tbody></table></div>';
+  h += '<div style="margin-top:12px;font-size:11.5px;color:var(--ink4)">共 '+list.length+' 位客户 · 删除前请确认，客户记录删除后不可恢复</div>';
   $('content').innerHTML = h;
+  var el = $('cq'); if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
 }
 
-function editNote(i){
-  var c = CUSTOMERS[i];
-  $('drTitle').textContent = '备注 · ' + c.name;
-  var h = '<div class="field"><label>什么时候记住这个人</label>'
-    + '<textarea id="n_txt" style="min-height:130px" placeholder="他喜欢什么、预算多少、问过哪件、忌讳什么">'+esc(c.note)+'</textarea></div>'
-    + '<div style="font-size:11.5px;color:var(--ink3);line-height:1.9">这段文字只有后台看得到。下次他再来问，您一眼就知道之前在聊什么，这比任何客户管理系统都管用。</div>';
+function editCustomer(idx){
+  var c = (idx===undefined || idx===null || idx==='') ? null : CUSTOMERS[idx];
+  $('drTitle').textContent = c ? '编辑客户 · ' + c.name : '新增客户';
+  var h = '';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>姓名<em>*</em></label><input id="c_name" value="'+esc(c?c.name:'')+'" placeholder="如 陈先生"></div>';
+  h += '<div class="field"><label>手机号</label><input id="c_phone" value="'+esc(c?c.phone:'')+'" placeholder="如 13800000000"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>来源</label><select id="c_src">'
+    + ['抖音','搜索','朋友介绍','其他'].map(function(s){ return '<option'+(c&&c.src===s?' selected':'')+'>'+s+'</option>'; }).join('')
+    + '</select></div>';
+  h += '<div class="field"><label>首次到访日期</label><input id="c_first" value="'+esc(c?c.first:'')+'" placeholder="如 2026-11-15"></div>';
+  h += '</div>';
+  h += '<div class="row2">';
+  h += '<div class="field"><label>订单数</label><input id="c_orders" type="number" value="'+(c?c.orders:0)+'"></div>';
+  h += '<div class="field"><label>累计消费（元）</label><input id="c_amount" type="number" value="'+(c?c.amount:0)+'"></div>';
+  h += '</div>';
+  h += '<div class="field"><label>备注</label><textarea id="c_note" style="min-height:110px" placeholder="他喜欢什么、预算多少、问过哪件、忌讳什么">'+esc(c?c.note:'')+'</textarea></div>';
   $('drBody').innerHTML = h;
   $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveNote('+i+')">保存</button>';
+    + '<button class="btn primary" onclick="saveCustomer('+(idx===undefined||idx===null?'-1':idx)+')">'+(c?'保存修改':'添加客户')+'</button>';
   openDrawer();
 }
-function saveNote(i){
-  CUSTOMERS[i].note = $('n_txt').value.trim();
-  closeDrawer(); renderCustomers(); toast('备注已保存');
+
+function saveCustomer(idx){
+  var name = $('c_name').value.trim();
+  if(!name){ toast('姓名必填'); return; }
+  var obj = {
+    name: name,
+    phone: $('c_phone').value.trim(),
+    src: $('c_src').value,
+    first: $('c_first').value.trim(),
+    orders: +$('c_orders').value || 0,
+    amount: +$('c_amount').value || 0,
+    note: $('c_note').value.trim()
+  };
+  if(idx === -1){
+    obj.openid = 'local-' + Date.now();
+    CUSTOMERS.push(obj);
+    toast('已添加客户');
+  }else{
+    var old = CUSTOMERS[idx];
+    obj.openid = old.openid;
+    CUSTOMERS[idx] = obj;
+    toast('已保存修改');
+  }
+  saveCustomers();
+  closeDrawer(); renderCustomers();
+}
+
+function delCustomer(idx){
+  var c = CUSTOMERS[idx];
+  if(!c) return;
+  if(!confirm('确定删除客户「'+c.name+'」吗？删除后不可恢复。')) return;
+  CUSTOMERS.splice(idx, 1);
+  saveCustomers();
+  renderCustomers();
+  toast('已删除');
 }
 
 /* ==================== 账号 ==================== */
 function renderAccounts(){
   if(!can('accounts')){ $('content').innerHTML = '<div class="empty-row">当前账号没有权限</div>'; return; }
   var h = '<div class="role-hint">'
-    + '<b>本机账号登录：</b>账号密码写在页面里，对上就进，不经过邮箱、不经过云端。这些账号只存在于本机页面。</div>';
-  h += '<div class="card"><table><thead><tr><th>账号</th><th>姓名</th><th>角色</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+    + '<b>本机账号登录：</b>账号密码存在本机浏览器，对上就进，不经过邮箱、不经过云端。</div>';
+  h += '<div class="toolbar"><span class="sp"></span><button class="btn primary" onclick="addAccount()">+ 新增账号</button></div>';
+  h += '<div class="card"><table><thead><tr><th>账号</th><th>姓名</th><th>角色</th><th>状态</th><th style="text-align:right">操作</th></tr></thead><tbody>';
   ACCOUNTS.forEach(function(a, i){
     h += '<tr>'
       + '<td style="font-family:ui-monospace,monospace;font-size:12px">'+esc(a.user)+'</td>'
       + '<td>'+esc(a.name)+'</td>'
       + '<td>'+esc(a.role)+'</td>'
       + '<td><span class="tag '+(a.active?'sale':'wait')+'">'+(a.active?'正常':'已停用')+'</span></td>'
-      + '<td><button class="btn" style="height:26px" onclick="toggleAcc('+i+')">'+(a.active?'停用':'启用')+'</button></td>'
+      + '<td style="text-align:right;white-space:nowrap">'
+      + '<button class="btn sm" onclick="toggleAcc('+i+')">'+(a.active?'停用':'启用')+'</button>'
+      + '<button class="btn sm" style="margin-left:4px" onclick="editAccount('+i+')">编辑</button>'
+      + '<button class="btn sm" style="margin-left:4px" onclick="delAccount('+i+')">删除</button>'
+      + '</td>'
       + '</tr>';
   });
   h += '</tbody></table></div>';
   h += '<div style="margin-top:14px;font-size:11.5px;color:var(--ink4);line-height:2">'
-    + '要新增管理员账号，点右上角「新增账号」，填账号、姓名、密码即可。</div>';
+    + '账号可以新增、编辑（改密码/角色）、停用、删除。请至少保留一个「超级管理员」账号。</div>';
   $('content').innerHTML = h;
 }
 
 function toggleAcc(i){
   ACCOUNTS[i].active = !ACCOUNTS[i].active;
+  saveAccounts();
   renderAccounts();
   toast(ACCOUNTS[i].active ? '已启用' : '已停用，该账号立即无法登录');
 }
 
 function addAccount(){
-  $('drTitle').textContent = '新增管理账号';
+  editAccount(-1);
+}
+
+function editAccount(idx){
+  var a = (idx===undefined || idx===null || idx==='' || idx===-1) ? null : ACCOUNTS[idx];
+  $('drTitle').textContent = a ? '编辑账号 · ' + a.name : '新增管理账号';
   var h = '';
   h += '<div class="row2">';
-  h += '<div class="field"><label>登录账号<em>*</em></label><input id="a_user" placeholder="英文或数字，如 zhuli"></div>';
-  h += '<div class="field"><label>姓名<em>*</em></label><input id="a_name" placeholder="如 小周"></div>';
+  h += '<div class="field"><label>登录账号<em>*</em></label><input id="a_user" value="'+esc(a?a.user:'')+'" placeholder="英文或数字，如 zhuli"'+(a?' disabled':'')+'></div>';
+  h += '<div class="field"><label>姓名<em>*</em></label><input id="a_name" value="'+esc(a?a.name:'')+'" placeholder="如 小周"></div>';
   h += '</div>';
-  h += '<div class="field"><label>初始密码<em>*</em></label><input id="a_pwd" placeholder="至少 6 位"></div>';
-  h += '<div class="field"><label>角色</label><select id="a_role"><option>客服</option><option>超级管理员</option></select></div>';
+  h += '<div class="field"><label>'+(a?'新密码（留空则不修改）':'初始密码')+'<em>*</em></label><input id="a_pwd" placeholder="至少 6 位"></div>';
+  h += '<div class="field"><label>角色</label><select id="a_role">'
+    + '<option'+(a&&a.role==='客服'?' selected':'')+'>客服</option>'
+    + '<option'+(a&&a.role==='超级管理员'?' selected':'')+'>超级管理员</option></select></div>';
   h += '<div class="role-hint" style="margin-top:4px;margin-bottom:0">'
     + '<b>客服：</b>能看概览、看订单并发货、看客户名单；<b>不能</b>改价格、不能发布作品、不能进账号管理。<br>'
     + '<b>超级管理员：</b>全部权限，包括创建和停用别人的账号。</div>';
   $('drBody').innerHTML = h;
   $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveAccount()">创建</button>';
+    + '<button class="btn primary" onclick="saveAccount('+(idx===undefined||idx===null||idx===-1?'-1':idx)+')">'+(a?'保存修改':'创建')+'</button>';
   openDrawer();
 }
 
-function saveAccount(){
+function saveAccount(idx){
   var u = $('a_user').value.trim(), n = $('a_name').value.trim(), p = $('a_pwd').value.trim(), r = $('a_role').value;
-  if(!u || !n || !p){ toast('账号、姓名、密码都要填'); return; }
-  if(p.length < 6){ toast('密码至少 6 位'); return; }
-  if(ACCOUNTS.filter(function(a){ return a.user===u; }).length){ toast('这个账号已经存在'); return; }
-  ACCOUNTS.push({user:u, pwd:p, name:n, role:r, active:true, last:'从未登录'});
+  if(!u || !n){ toast('账号、姓名都要填'); return; }
+  if(idx === -1){
+    if(p.length < 6){ toast('密码至少 6 位'); return; }
+    if(ACCOUNTS.filter(function(a){ return a.user===u; }).length){ toast('这个账号已经存在'); return; }
+    ACCOUNTS.push({user:u, pwd:p, name:n, role:r, active:true, last:'从未登录'});
+    toast('已创建，把这个账号密码发给' + n);
+  }else{
+    var a = ACCOUNTS[idx];
+    a.name = n; a.role = r;
+    if(p){ if(p.length < 6){ toast('密码至少 6 位'); return; } a.pwd = p; }
+    toast('已保存修改');
+  }
+  saveAccounts();
   closeDrawer(); renderAccounts();
-  toast('已创建，把这个账号密码发给' + n);
+}
+
+function delAccount(idx){
+  var a = ACCOUNTS[idx];
+  if(!a) return;
+  if(a.user === 'admin'){ toast('内置管理员 admin 不可删除'); return; }
+  var admins = ACCOUNTS.filter(function(x){ return x.role==='超级管理员' && x.active; });
+  if(a.role==='超级管理员' && admins.length <= 1){ toast('至少保留一个超级管理员'); return; }
+  if(!confirm('确定删除账号「'+a.name+'（'+a.user+'）」吗？删除后该账号无法登录。')) return;
+  ACCOUNTS.splice(idx, 1);
+  saveAccounts();
+  renderAccounts();
+  toast('已删除');
 }
 
 /* ==================== 作品数据持久化（原型里用本地存储代替云数据库） ==================== */
@@ -832,6 +996,32 @@ function loadWorks(){
 }
 function saveWorks(){
   try{ localStorage.setItem('gh_works', JSON.stringify(WORKS)); }catch(e){}
+}
+
+/* ==================== 订单 / 客户 / 账号 持久化 ==================== */
+function loadOrders(){
+  var raw = null;
+  try{ raw = localStorage.getItem('gh_orders'); }catch(e){}
+  if(raw){ try{ var a = JSON.parse(raw); if(a && a.length){ ORDERS = a; return; } }catch(e){} }
+}
+function saveOrders(){
+  try{ localStorage.setItem('gh_orders', JSON.stringify(ORDERS)); }catch(e){}
+}
+function loadCustomers(){
+  var raw = null;
+  try{ raw = localStorage.getItem('gh_customers'); }catch(e){}
+  if(raw){ try{ var a = JSON.parse(raw); if(a && a.length){ CUSTOMERS = a; return; } }catch(e){} }
+}
+function saveCustomers(){
+  try{ localStorage.setItem('gh_customers', JSON.stringify(CUSTOMERS)); }catch(e){}
+}
+function loadAccounts(){
+  var raw = null;
+  try{ raw = localStorage.getItem('gh_accounts'); }catch(e){}
+  if(raw){ try{ var a = JSON.parse(raw); if(a && a.length){ ACCOUNTS = a; return; } }catch(e){} }
+}
+function saveAccounts(){
+  try{ localStorage.setItem('gh_accounts', JSON.stringify(ACCOUNTS)); }catch(e){}
 }
 
 /* ==================== 外观与配置 ==================== */
