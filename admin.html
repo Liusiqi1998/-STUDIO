@@ -1015,9 +1015,9 @@ function exportCfg(){
   downloadText('cfg.js', r.text);
   var kb = Math.round(r.text.length/1024);
   if(r.miss.length){
-    toast('已导出 ' + kb + 'KB，但有 ' + r.miss.length + ' 张图缺失，页面会空图');
+    toast('已生成发布文件 ' + kb + 'KB，但有 ' + r.miss.length + ' 张图缺失，页面会空图');
   }else{
-    toast('已导出 cfg.js（' + kb + 'KB），覆盖站点里的同名文件即上线');
+    toast('发布文件已生成（' + kb + 'KB），把 cfg.js 发给 AI 助手即可上线');
   }
 }
 function copyCfg(){
@@ -1176,13 +1176,13 @@ function renderTheme(){
     + '<div class="prev-ft">'
     + '<button class="btn primary" id="saveBtn" style="height:34px;flex:1" onclick="saveLocal()">保存</button>'
     + '<button class="btn" style="height:34px" onclick="saveCfg()">本机草稿</button>'
-    + '<button class="btn" style="height:34px" onclick="exportCfg()">导出</button>'
+    + '<button class="btn primary" style="height:34px;background:#c0392b;border-color:#c0392b" onclick="exportCfg()">发布上线</button>'
     + '</div>'
     + '<div class="prev-ft" style="padding-top:0">'
     + '<button class="btn" style="height:30px;flex:1" onclick="openCfg()">新窗口看</button>'
     + '<button class="btn" style="height:30px" onclick="resetCfg()">恢复默认</button>'
     + '</div>'
-    + '<div class="prev-note">改完点「保存」，写进本机浏览器。点「导出」可下载 cfg.js 覆盖站点文件发布。</div>'
+    + '<div class="prev-note">改完点「保存」写进本机浏览器预览；点「发布上线」生成 cfg.js，把它发给 AI 助手即可让所有设备看到最新内容。</div>'
     + '</div></div>';
 
   h += '</div>';
@@ -1566,12 +1566,13 @@ function renderPages(){
     +  '<div class="prev-ft">'
     +  '<button class="btn primary" id="saveBtn" style="height:34px;flex:1" onclick="saveLocal()">保存</button>'
     +  '<button class="btn" style="height:34px" onclick="saveCfg()">本机草稿</button>'
+    +  '<button class="btn primary" style="height:34px;background:#c0392b;border-color:#c0392b" onclick="exportCfg()">发布上线</button>'
     +  '</div>'
     +  '<div class="prev-ft" style="padding-top:0">'
     +  '<button class="btn" style="height:30px;flex:1" onclick="openCfg()">新窗口看</button>'
     +  '<button class="btn" style="height:30px;flex:1" onclick="resetPage(\''+pk+'\')">恢复本页默认</button>'
     +  '</div>'
-    +  '<div class="prev-note">这个预览就是客户看到的样子，改一个字、换一张图，0.3 秒后就跟着变。满意了点「导出配置上线」。</div>'
+    +  '<div class="prev-note">这个预览就是客户看到的样子，改一个字、换一张图，0.3 秒后就跟着变。满意了点「发布上线」生成 cfg.js，发给 AI 助手即可全设备生效。</div>'
     +  '</div></div>';
 
   h += '</div>';
