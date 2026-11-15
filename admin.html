@@ -617,9 +617,21 @@ function editWork(id){
   h += '<div class="warnbox">不含濒危物种制品（象牙、犀角、玳瑁、珊瑚）；不含「开光、辟邪、招财」等功效承诺；不含「保真、升值、投资回报」等广告法禁用表述。这两条由发布人负责。</div>';
 
   $('drBody').innerHTML = h;
-  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveWork(\''+(id||'')+'\')">'+(w?'保存修改':'保存并上架')+'</button>';
+  var foot = '<button class="btn" onclick="closeDrawer()">取消</button>';
+  if(id){ foot += '<button class="btn" style="margin-left:auto;color:#c0392b;border-color:#c0392b" onclick="delWork(\''+id+'\')">删除</button>'; }
+  foot += '<button class="btn primary" onclick="saveWork(\''+(id||'')+'\')">'+(w?'保存修改':'保存并上架')+'</button>';
+  $('drFoot').innerHTML = foot;
   openDrawer();
+}
+
+function delWork(id){
+  var w = WORKS.filter(function(x){ return x.id===id; })[0];
+  if(!w) return;
+  if(!confirm('确定删除作品「'+w.t+'」吗？删除后不可恢复。')) return;
+  for(var i=0;i<WORKS.length;i++){ if(WORKS[i].id===id){ WORKS.splice(i,1); break; } }
+  saveWorks();
+  closeDrawer(); renderWorks();
+  toast('已删除');
 }
 
 function saveWork(id){
@@ -700,8 +712,10 @@ function editOrder(idx){
   h += '</div>';
   h += '<div class="field"><label>付款时间</label><input id="o_payAt" value="'+esc(o?o.payAt:'')+'" placeholder="如 11-15 16:30"></div>';
   $('drBody').innerHTML = h;
-  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveOrder('+(idx===undefined||idx===null?'-1':idx)+')">'+(o?'保存修改':'添加订单')+'</button>';
+  var foot = '<button class="btn" onclick="closeDrawer()">取消</button>';
+  if(idx !== -1){ foot += '<button class="btn" style="margin-left:auto;color:#c0392b;border-color:#c0392b" onclick="delOrder('+idx+')">删除</button>'; }
+  foot += '<button class="btn primary" onclick="saveOrder('+(idx===undefined||idx===null?'-1':idx)+')">'+(o?'保存修改':'添加订单')+'</button>';
+  $('drFoot').innerHTML = foot;
   openDrawer();
 }
 
@@ -791,7 +805,11 @@ function viewOrder(no){
   });
   h += '</table>';
   $('drBody').innerHTML = h;
-  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">关闭</button>';
+  var oIdx = ORDERS.indexOf(o);
+  var foot = '<button class="btn" onclick="closeDrawer()">关闭</button>';
+  if(oIdx > -1){ foot += '<button class="btn" style="margin-left:auto;color:#c0392b;border-color:#c0392b" onclick="delOrder('+oIdx+')">删除</button>'; }
+  foot += '<button class="btn primary" onclick="editOrder('+oIdx+')">编辑</button>';
+  $('drFoot').innerHTML = foot;
   openDrawer();
 }
 
@@ -851,8 +869,10 @@ function editCustomer(idx){
   h += '</div>';
   h += '<div class="field"><label>备注</label><textarea id="c_note" style="min-height:110px" placeholder="他喜欢什么、预算多少、问过哪件、忌讳什么">'+esc(c?c.note:'')+'</textarea></div>';
   $('drBody').innerHTML = h;
-  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveCustomer('+(idx===undefined||idx===null?'-1':idx)+')">'+(c?'保存修改':'添加客户')+'</button>';
+  var foot = '<button class="btn" onclick="closeDrawer()">取消</button>';
+  if(idx !== -1 && idx !== undefined && idx !== null){ foot += '<button class="btn" style="margin-left:auto;color:#c0392b;border-color:#c0392b" onclick="delCustomer('+idx+')">删除</button>'; }
+  foot += '<button class="btn primary" onclick="saveCustomer('+(idx===undefined||idx===null?'-1':idx)+')">'+(c?'保存修改':'添加客户')+'</button>';
+  $('drFoot').innerHTML = foot;
   openDrawer();
 }
 
@@ -945,8 +965,10 @@ function editAccount(idx){
     + '<b>客服：</b>能看概览、看订单并发货、看客户名单；<b>不能</b>改价格、不能发布作品、不能进账号管理。<br>'
     + '<b>超级管理员：</b>全部权限，包括创建和停用别人的账号。</div>';
   $('drBody').innerHTML = h;
-  $('drFoot').innerHTML = '<button class="btn" onclick="closeDrawer()">取消</button>'
-    + '<button class="btn primary" onclick="saveAccount('+(idx===undefined||idx===null||idx===-1?'-1':idx)+')">'+(a?'保存修改':'创建')+'</button>';
+  var foot = '<button class="btn" onclick="closeDrawer()">取消</button>';
+  if(idx !== -1 && idx !== undefined && idx !== null){ foot += '<button class="btn" style="margin-left:auto;color:#c0392b;border-color:#c0392b" onclick="delAccount('+idx+')">删除</button>'; }
+  foot += '<button class="btn primary" onclick="saveAccount('+(idx===undefined||idx===null||idx===-1?'-1':idx)+')">'+(a?'保存修改':'创建')+'</button>';
+  $('drFoot').innerHTML = foot;
   openDrawer();
 }
 
