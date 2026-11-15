@@ -377,10 +377,9 @@ html[data-embed="on"] .cap,html[data-embed="on"] .jump{display:none}
 html[data-embed="on"] .phone{width:375px;height:812px;margin:0;border:0;border-radius:0;
   box-shadow:none;transform:none}
 </style>
-<!-- 云服务 SDK：配置与作品都存在云端数据库，后台改完立刻生效 -->
-<!-- 云服务 SDK：放本地自己托管，不走 CDN（jsDelivr 在国内经常连不上） -->
-<script src="./vendor/cloud-sdk.js"></script>
-<!-- 离线兜底配置：云端读不到时用这里的默认值 -->
+<!-- 本地数据链路：配置与作品都存在浏览器 localStorage（gh_cfg/gh_works），
+     后台 admin.html 保存后，前端同源读取，改完点保存刷新即生效 -->
+<!-- 离线兜底配置：本地读不到时用这里的默认值 -->
 <script src="./cfg.js"></script>
 <script>
 /* =========================================================================
@@ -1478,62 +1477,11 @@ tick(); setInterval(tick, 20000);
 drawQR('qr1',20261113);
 drawQR('qr2',87654321);
 
-/* ==================== 云端内容 ====================
-   配置与作品都存在云数据库：site_config 一行管全站文案与配色，works 一表管货。
-   后台改完点保存，客户刷新就能看到。读不到就安静地用页面里的默认值，不白屏。 */
-var CLOUD_CONF = {
-  endpoint: 'https://wbapp-ho0ctbltvoiyjxduirgtgl.app.workbuddy.host',
-  oauthRelayBaseUrl: 'https://www.workbuddy.cn/v2/as/genie-baas/oauth',
-  publishableKey: 'wbpk_ho0CTBlTVOiyJXdUIRGtgL_QW8CinQPGpgHdNee2PQaAClJkzQZC77c'
-};
-var cloud = null;
-try{
-  if(window.WorkBuddyCloud && WorkBuddyCloud.createWorkBuddyCloud){
-    cloud = WorkBuddyCloud.createWorkBuddyCloud(CLOUD_CONF);
-  }
-}catch(e){ cloud = null; }
-
-function reapplyAll(){
-  try{ applyTheme(); }catch(e){}
-  try{ applyContent(); }catch(e){}
-  try{ renderHome(); }catch(e){}
-  try{ renderCat(); }catch(e){}
-  try{ if(curItem) renderDetail(curItem); }catch(e){}
-  try{ applyPages(); }catch(e){}
-}
-
-function loadFromCloud(){
-  if(!cloud) return Promise.resolve();
-  /* 后台实时预览带 ?cfg=，那是在看未保存的改动，不能被云端内容盖掉 */
-  if(new URLSearchParams(location.search).get('cfg')) return Promise.resolve();
-  return cloud.database.from('site_config').select('data').eq('id',1).maybeSingle()
-    .then(function(r){
-      if(r && !r.error && r.data && r.data.data && Object.keys(r.data.data).length){
-        CFG = deepMerge(DEFAULT_CFG, r.data.data);
-        if(CFG.cats){
-          for(var ck in CFG.cats){
-            if(CATS[ck]){ CATS[ck].label = CFG.cats[ck].label; CATS[ck].subs = CFG.cats[ck].subs.slice(); }
-          }
-        }
-        reapplyAll();
-      }
-      return cloud.database.from('works').select('data,status,sort').order('sort',{ascending:true});
-    })
-    .then(function(w){
-      if(w && !w.error && w.data && w.data.length){
-        applyWorkList(w.data.map(function(r){
-          var o = r.data || {};
-          if(r.status) o.status = r.status;
-          return o;
-        }));
-        reapplyAll();
-      }
-    })
-    .catch(function(e){ /* 云端不可用时保持默认内容 */ });
-}
+/* ==================== 本地内容 ====================
+   配置与作品都存在浏览器 localStorage（gh_cfg / gh_works / gh_img_*），
+   与后台 admin.html 同源。后台改完点「保存」，前端刷新即可看到最新内容。 */
 
 boot();
-loadFromCloud();
 </script>
 </body>
 </html>
