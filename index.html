@@ -994,9 +994,14 @@ function applyWorkList(list){
 }
 (function applyWorks(){
   var list = null;
-  /* 优先用已发布的作品数据（cfg.js），其次才是本机后台草稿 */
-  if(REMOTE.works && REMOTE.works.length){ list = REMOTE.works; }
-  else{
+  /* 后台预览（?draft=1）读本机草稿；否则优先用已发布的作品数据（cfg.js），其次才是本机草稿 */
+  if(/[?&]draft=1/.test(location.search)){
+    var dr = null;
+    try{ dr = localStorage.getItem('gh_works'); }catch(e){}
+    if(dr){ try{ list = JSON.parse(dr); }catch(e){ list = null; } }
+  }else if(REMOTE.works && REMOTE.works.length){
+    list = REMOTE.works;
+  }else{
     var raw = null;
     try{ raw = localStorage.getItem('gh_works'); }catch(e){}
     if(!raw) return;

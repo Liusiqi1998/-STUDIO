@@ -933,7 +933,10 @@ function schedulePreview(){
 function pushPreview(){
   var f = $('pvFrame');
   if(!f) return;
-  f.src = 'index.html?embed=1&cfg=' + encodeURIComponent(JSON.stringify(CFG_ED)) + '#' + pvPage;
+  /* 先把当前编辑内容写进本地草稿（gh_cfg），再让预览读草稿。
+     不再把配置塞进 URL——线上静态托管会因 URL 过长直接断开连接。 */
+  try{ localStorage.setItem('gh_cfg', JSON.stringify(CFG_ED)); }catch(e){}
+  f.src = 'index.html?embed=1&draft=1#' + pvPage;
 }
 function setPvPage(k){
   pvPage = k;
@@ -1060,7 +1063,8 @@ function resetCfg(){
   toast('已恢复出厂设置');
 }
 function openCfg(){
-  window.open('index.html?cfg=' + encodeURIComponent(JSON.stringify(CFG_ED)) + '#home', '_blank');
+  try{ localStorage.setItem('gh_cfg', JSON.stringify(CFG_ED)); }catch(e){}
+  window.open('index.html?draft=1#home', '_blank');
 }
 function pickHero(el){
   var w = WORKS.filter(function(x){ return x.id===el.value; })[0];
